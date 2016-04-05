@@ -30,7 +30,7 @@ var fetchConversationsId = function(url){
         });
 }
 
-fetchConversationsMessages() {
+var fetchAndSaveConversationMessage = function() {
     conversationsId.forEach(function (id) {
         fetchConversationMessages(id);
     });
@@ -56,4 +56,4 @@ var fetchConversationMessages = function (id) {
 };
 
 //fetchConversationsId('https://graph.facebook.com/v2.3/me/inbox?access_token=' + accessToken + '&debug=all&fields=id&format=json&method=get&pretty=0&suppress_http_code=1');
-fetchConversationMessages(234222416732567);
+fetchConversationMessages('234222416732567');
