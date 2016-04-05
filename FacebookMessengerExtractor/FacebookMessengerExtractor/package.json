@@ -1,0 +1,16 @@
+{
+  "name": "FacebookMessengerExtractor",
+  "version": "0.0.0",
+  "description": "FacebookMessengerExtractor",
+  "main": "app.js",
+  "author": {
+    "name": "Mathieu",
+    "email": ""
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "fbgraph": "^1.1.0",
+    "lodash": "^4.8.2",
+    "request-promise": "^2.0.1"
+  }
+}
