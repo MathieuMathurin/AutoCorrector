@@ -4,7 +4,7 @@
 var user = 'Mathieu Mathurin'
 //Le accessToken doit etre pris a partir de https://developers.facebook.com/tools/explorer car mon app FB ne peut pas utiliser d'API inferieur a 2.5
 var accessToken = 'CAACEdEose0cBADXgY2mnKLAUbgVCcnc12FLdZAOO8gOIX3iNSwlsV8XLFfUZC5KTvu7zQi2zxSitaAT6Ff2t6UmM95gbACdGdon8ZCvZCtDKPBsHjWCyAnTKnLK8J3CZB3DCrAMGhAI84hhf0xnabUw6K4EVr5ZAp6tJZCOZBUcqfSZC8fQQ3FNhdF7Xbk3i6Y5DFlbtTuotrFAZDZD';
-
+var conversation = 251195684931060;
 
 var _ = require('lodash'),
     request = require('request-promise'),
@@ -87,4 +87,4 @@ var fetchConversationMessages = function (url, id) {
  * */
 
 //fetchConversationsId('https://graph.facebook.com/v2.3/me/inbox?access_token=' + accessToken + '&debug=all&fields=id&format=json&method=get&pretty=0&suppress_http_code=1');
-fetchAndSaveConversationsMessages(251195684931060);
+fetchAndSaveConversationsMessages(conversation);
