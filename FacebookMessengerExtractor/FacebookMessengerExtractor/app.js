@@ -3,8 +3,8 @@
 //Configs
 var user = 'Mathieu Mathurin'
 //Le accessToken doit etre pris a partir de https://developers.facebook.com/tools/explorer car mon app FB ne peut pas utiliser d'API inferieur a 2.5
-var accessToken = 'CAACEdEose0cBADXgY2mnKLAUbgVCcnc12FLdZAOO8gOIX3iNSwlsV8XLFfUZC5KTvu7zQi2zxSitaAT6Ff2t6UmM95gbACdGdon8ZCvZCtDKPBsHjWCyAnTKnLK8J3CZB3DCrAMGhAI84hhf0xnabUw6K4EVr5ZAp6tJZCOZBUcqfSZC8fQQ3FNhdF7Xbk3i6Y5DFlbtTuotrFAZDZD';
-var conversation = 251195684931060;
+var accessToken = 'CAACEdEose0cBAN2CG8CNgi9fw9JzG1mIsccURwzZBW3ABrZAQvPDWnI7HzlirBLCYrwRYJwZCtrZCZBbVvVBIHZBpagfHDCxIH0IjuPZCtRF4xTIDKWsZAfQjmzjcRacZBr6GK5QcQG1fr07vWBxmlBvst3JTc89ZAofpJlNZAW0L0T4omqY19rtQLxLK4sbQypivLAvYw2ZCwrmgwZDZD';
+var conversation = 581089048657689;
 
 var _ = require('lodash'),
     request = require('request-promise'),
@@ -73,11 +73,19 @@ var fetchConversationMessages = function (url, id) {
         temp = _.join(temp, '\n');
         fs.appendFile('messages-' + id  + '.txt', temp, 'utf8', function (err) {
             if (!err) {
-                console.log('Writing to file');
+                console.log('Writing to file' + id);
             }
         });
     });        
 };
+
+var removeFile = function (id) {
+    fs.unlink('messages-' + id + '.txt', function (err) {
+        if (!err) {
+            console.log('File ' + id + ' successfully deleted');
+        }
+    });
+}
 
 /* Pour aller cherche tout t'es conversation ID, uncomment la ligne suivante et comment l'autre.
  * Une fois fait, tu auras tous les ids de tes conversation dans le fichier conversationIds.txt
@@ -87,4 +95,12 @@ var fetchConversationMessages = function (url, id) {
  * */
 
 //fetchConversationsId('https://graph.facebook.com/v2.3/me/inbox?access_token=' + accessToken + '&debug=all&fields=id&format=json&method=get&pretty=0&suppress_http_code=1');
-fetchAndSaveConversationsMessages(conversation);
+//fetchAndSaveConversationsMessages(conversation);
+
+var codes = [1123892897638604, 1456296401335992, 828888000562885, 671357606297360, 1100576146626310, 1037095146301133, 531897403630383, 238502559683956, 342810035917424, 688784634599401, 109953036018071, 686272678162679, 956339007757373, 834121500006610, 753033908138363, 838496976232850, 722530717769992, 427272664070743, 115830228750847, 2186183378608, 348318395377938, 1437185196585595, 283382865076083, 1601064886800452, 611692122300792, 1440130366287233, 1668096830080179, 417986311692153, 812671882135052, 283386355012758, 1437426679901254, 1555843847999766, 978122838872139, 647490171949881, 382390698596951];
+
+//Choisi la fonction a executer sur la liste selon tes besoins
+for (var i = 0; i < codes.length; ++i) {
+    //fetchAndSaveConversationsMessages(codes[i]);
+    removeFile(codes[i]);
+}
