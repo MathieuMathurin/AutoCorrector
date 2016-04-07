@@ -3,7 +3,7 @@
 //Configs
 var user = 'Mathieu Mathurin'
 //Le accessToken doit etre pris a partir de https://developers.facebook.com/tools/explorer car mon app FB ne peut pas utiliser d'API inferieur a 2.5
-var accessToken = 'CAACEdEose0cBAM0xfRfteFvzcdC4UQl4N8CWZCrLg7HI64Bi1ngZAuDn04Cp9IMtnfwZACeBZCoj1ZBUKCVq3igmGuSvZAQs5Qr6AFNynp8ZAGJZCAXWLeOmzTtyUs1EiwU0bmTQ1xCzNK70jCjFdZAzNboqqvl0OzPOMIywt0BbWmDdylRfwYha2K6GPWZAAIYJQ192A5ZBVSnjwZDZD';
+var accessToken = 'CAACEdEose0cBAAwcUDZAbnKazKZAQ9OWaYqolVxhZC3BJp4DgcbQWCtiwAS2xbVjn7yJQsu8oV3dLXc4G4SSAykakSEacCuRRDu2DPKpwIGTpnCctWpNDSKsYNWziVq3Oo0Jw6Ppj7zGAdTPZCjQSJduI6cQWn0Jpa5QaraEyZBVh8kOObWmmzCXrrDdN3QRgF3os36VkIgZDZD';
 var conversation = 234222416732567;
 
 var _ = require('lodash'),
@@ -71,7 +71,7 @@ var fetchConversationMessages = function (url, id) {
         var temp = _.chain(data).filter(function (d) { return d.from.name == user }).map(function (m) { return m.message }).value();
         conversationsMessages = conversationsMessages.concat(temp);
         temp = _.join(temp, '\n');
-        fs.appendFile('messages-' + id  + '.txt', temp, 'utf8', function (err) {
+        fs.appendFile('messages/messages-' + id  + '.txt', temp, 'utf8', function (err) {
             if (!err) {
                 console.log('Writing to file ' + id);
             }
