@@ -27,27 +27,19 @@ glob("messages/messages-*.txt", function (err, files) {
         });
     });
 });
+
 var dictionnaire = {};
-var wordCount = 0;
+
 var printWeirdLine = function (){
     var ws2 = fs.createWriteStream('dictionnary');
     var lineReader = rl.createInterface({
         input: fs.createReadStream('messages/concat.txt')
     });
 
-    lineReader.on('line', function (line) {
-        //var char = '?';
-        //var regex = new RegExp('\\' + char, 'g');
-        //var match = line.match(regex);
-        //if (match != null) {
-        //    //console.log(line);
-        //    //console.log(match[0]);           
-        //    var newLine = line.replace(regex, " " + char + " ");
-        //    console.log(newLine);            
-        //}
+    lineReader.on('line', function (line) {        
+        line = isolateStrings(line);
         var temp = line.split(' ');
-        temp.forEach(function (word) {
-            ++wordCount;
+        temp.forEach(function (word) {            
             var w = word.toLowerCase();
             if (dictionnaire[word] == null) {
                 dictionnaire[word] = 1;
@@ -60,10 +52,62 @@ var printWeirdLine = function (){
     lineReader.on('close', function () {               
         var temp = _.toPairs(dictionnaire);
         for (var i = 0; i < temp.length; ++i) {
-            fs.appendFile('messages/dictionnary', temp[i][0] + ' : ' + temp[i][1] + "\n", 'utf8', function (err) { 
-            
+            fs.appendFile('messages/dictionnary', temp[i][0] + ' : ' + temp[i][1] + "\n", 'utf8', function (err) {             
             });
         }        
     });
 
 };
+
+function isolateStrings(line){
+    var newLine = line;
+    
+    if (newLine.indexOf("http") != -1) {
+        return "";
+    }
+    
+    //Isolation des caracteres speciaux de regex
+    var ponctuations = ['?', '!', '*'];   
+    for (var i = 0; i < ponctuations.length; ++i) {
+        var char = ponctuations[i];
+        var regex = new RegExp('\\' + char, 'g');
+        var match = newLine.match(regex);
+        if (match != null) {
+            //console.log(line);
+            //console.log(match[0]);           
+            newLine = newLine.replace(regex, " " + char + " ");
+            console.log(newLine);
+        }
+    }
+    
+    //Isolation des points et ... d'une ligne (une suite de point est transformer en ...)
+    var multiPointRegex = new RegExp('\\.\\.+', 'g');
+    var singlePointRegex = new RegExp('.*\\.', 'g');
+
+    var multiPointMatch = newLine.match(multiPointRegex);
+    var singlePointMatch = newLine.match(singlePointRegex);
+    
+    if (multiPointMatch != null) {
+        newLine = newLine.replace(multiPointRegex, " " + "..." + " ");
+    } else {
+        if (singlePointMatch != null) {
+            newLine = newLine.replace(singlePointMatch, " " + "." + " ");
+        }
+    }
+    
+    //Isolation des caracteres non speciaux de regex
+    var chars =['"'];
+    for (var i = 0; i < chars.length; ++i) {
+        var char = chars[i];
+        var regex = new RegExp(char, 'g');
+        var match = newLine.match(regex);
+        if (match != null) {
+            //console.log(line);
+            //console.log(match[0]);           
+            newLine = newLine.replace(regex, " " + char + " ");
+            console.log(newLine);
+        }
+    }
+
+    return newLine;
+}
