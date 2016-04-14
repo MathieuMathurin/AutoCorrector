@@ -1,0 +1,59 @@
+﻿<Window x:Class="AutoCorrector.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AutoCorrector"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid Background="#FF008378">
+        <Label Name="testLabel"></Label>
+        <DockPanel Margin="10,40,10,10">
+            <StackPanel DockPanel.Dock="Top">
+                <Label FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FF125956" FontFamily="Arimo" Background="#00000000">
+                    <Bold>AutoCorrector</Bold>
+                </Label>
+                <TextBox Name="userInput" KeyDown="UserInputKeyDown" TextWrapping="Wrap" Height="48" Margin="35,0" Opacity="0.82" BorderThickness="0" Foreground="#FFBCE0E2" Background="#FF084B4B" TextChanged="UpdateSuggestions">
+                    <TextBox.BorderBrush>
+                        <LinearGradientBrush EndPoint="0,20" MappingMode="Absolute" StartPoint="0,0">
+                            <GradientStop Color="#FF0C6972"/>
+                            <GradientStop Color="#FF0B5961" Offset="1"/>
+                        </LinearGradientBrush>
+                    </TextBox.BorderBrush>
+                </TextBox>
+                
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Bottom" Background="#FF55BFA7" Margin="35,35,35,15" Opacity="0.8">
+                <StackPanel.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="Background" Value="#FFAC0202" />
+                        <Setter Property="Margin" Value="5"></Setter>
+                        <Setter Property="Cursor" Value="Hand"/>
+                    </Style>
+                </StackPanel.Resources>
+                <WrapPanel Name="suggestionsPanel" MouseLeftButtonUp="SuggestionClicked">
+                    <Label Content="Allo"/>
+                    <Label Content="Hey" />
+                    <Label Content="Jmen" />
+                    <Label Content=":)" />
+                    <Label Content="Ouais" />
+                    <Label Content=":O"/>
+                    <Label Content="Mon"/>
+                    <Label Content="Ahahah"/>
+                    <Label Content="Ta"/>
+                    <Label Content="Yo"/>
+                    <Label Content="Jta"/>
+                    <Label Content="Jsuis"/>
+                    <Label Content="ahah"/>
+                    <Label Content="XD"/>
+                    <Label Content="Ihhh"/>
+                    <Label Content=":D"/>
+                    <Label Content=":DDD"/>
+                </WrapPanel>
+            </StackPanel>
+        </DockPanel>
+
+
+    </Grid>
+</Window>
