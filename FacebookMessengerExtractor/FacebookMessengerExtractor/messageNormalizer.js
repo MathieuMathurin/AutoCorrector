@@ -76,7 +76,7 @@ function isolateStrings(line){
             //console.log(line);
             //console.log(match[0]);           
             newLine = newLine.replace(regex, " " + char + " ");
-            console.log(newLine);
+            //console.log(newLine);
         }
     }
     
@@ -105,7 +105,6 @@ function isolateStrings(line){
             //console.log(line);
             //console.log(match[0]);           
             newLine = newLine.replace(regex, " " + char + " ");
-            console.log(newLine);
         }
     }
 
