@@ -1,9 +1,9 @@
 ﻿//Regarde plus bas pour les instruction de fonctionnement
 
 //Configs
-var user = 'Mathieu Mathurin'
+var user = 'Mathy Scott'
 //Le accessToken doit etre pris a partir de https://developers.facebook.com/tools/explorer car mon app FB ne peut pas utiliser d'API inferieur a 2.5
-var accessToken = 'CAACEdEose0cBAAwcUDZAbnKazKZAQ9OWaYqolVxhZC3BJp4DgcbQWCtiwAS2xbVjn7yJQsu8oV3dLXc4G4SSAykakSEacCuRRDu2DPKpwIGTpnCctWpNDSKsYNWziVq3Oo0Jw6Ppj7zGAdTPZCjQSJduI6cQWn0Jpa5QaraEyZBVh8kOObWmmzCXrrDdN3QRgF3os36VkIgZDZD';
+var accessToken = 'CAACEdEose0cBAPcjamBJDXDnyh4q1IHJ2f0hR95lLrLtXMHavC3pvHzIbx8j469SOdsTngpCdi9c9fE6aoqZBY8lV0ZBrvc61Ih5CUYUdMkYizWwawGpAZAqkE42EuJBvSWhWA2AaFse1YVtjnG8ZAs2yKi5WGslUqiWCb2SfRcy7xUkh3tOU7Umyv02MMbZA50lZAVMvjZBKPLb6ZB7L3OWzd0dKrosyxVpvMGEXYo21AZDZD';
 var conversation = 234222416732567;
 
 var _ = require('lodash'),
@@ -97,7 +97,7 @@ var removeFile = function (id) {
 //fetchConversationsId('https://graph.facebook.com/v2.3/me/inbox?access_token=' + accessToken + '&debug=all&fields=id&format=json&method=get&pretty=0&suppress_http_code=1');
 //fetchAndSaveConversationsMessages(conversation);
 
-var codes = [1484567826623, 269988146375396, 1586249476549, 169662673117571, 164738350261442, 223397484384585];
+var codes = [1457203717923751];
 
 //Choisi la fonction a executer sur la liste selon tes besoins
 for (var i = 0; i < codes.length; ++i) {
