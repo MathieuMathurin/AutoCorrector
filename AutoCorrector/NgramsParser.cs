@@ -8,6 +8,11 @@ namespace AutoCorrector
 {
     class NgramsParser
     {
+        List<NGram> nGrams;
         // todo
+        public void Load()
+        {
+            this.nGrams = new List<NGram>();
+        }
     }
 }

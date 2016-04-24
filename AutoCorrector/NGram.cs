@@ -7,30 +7,35 @@ using System.Threading.Tasks;
 namespace AutoCorrector
 {
     class NGram
-    {
-        string text;
-        int Frequency { get; set; }
+    {       
+        public int Frequency { get; set; }
+        public Dictionary<String, NGram> dictionnaire { get; set;}
+
+        public NGram()
+        {
+
+        }
 
         public NGram(string definition)
         {
             int splitIndex = definition.LastIndexOf(',');
-            this.Frequency = Int32.Parse(definition.Substring(splitIndex));
-            this.text = definition.Substring(0, splitIndex);
+            this.Frequency = Int32.Parse(definition.Substring(splitIndex));           
         }
 
-        public bool Contains(string someText)
-        {
-            return this.text.Contains(someText);
-        }
+        //public bool Contains(string someText)
+        //{
+        //    return this.text.Contains(someText);
+        //}
 
-        public bool Equals(string other)
-        {
-            return this.text == other;
-        }
+        //public bool Equals(string other)
+        //{
+        //    return this.text == other;
+        //}
 
-        public bool Equals(NGram other)
-        {
-            return this.text == other.text;
-        }
+        //public bool Equals(NGram other)
+        //{
+        //    return this.text == other.text;            
+        //}
+
     }
 }
