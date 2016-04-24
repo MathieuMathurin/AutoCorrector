@@ -16,6 +16,7 @@
 MAX_GRAM_LENGTH = 6
 #Liste de listes vides
 all_grams= [[] for x in range(MAX_GRAM_LENGTH+1)]
+sentence_end_markers = ['.', '!', '...', '?']
 
 ##	@fn	create_n_grams(n,line)
 #	Split le message recu aux espaces.
@@ -35,6 +36,28 @@ def create_n_grams(n,line):
 					all_grams[n][i].count+=1
 				except ValueError:
 					all_grams[n].append(Gram(sub))
+
+## @fn create_starter_grams(line):
+#	Create grams from first words of sentences.
+#
+def create_starter_grams(line):
+	words = line.split()
+	subs = [words[0]]
+	prev_is_end_of_sentence = False
+	for word in words:
+		if prev_is_end_of_sentence:
+			subs.append(word)
+			prev_is_end_of_sentence = False
+			continue
+		if word in sentence_end_markers:	
+			prev_is_end_of_sentence = True	
+	for sub in subs:
+		try:
+			i = all_grams[0].index(sub)
+			all_grams[0][i].count+=1
+		except ValueError:
+			all_grams[0].append(Gram(sub))
+			
 
 ##	@class	Gram
 #	Un gram (sequence de mots) d'une certaine longueur
@@ -61,14 +84,15 @@ def create_grams_from_file(file_path):
 	#Read from file then create and count grams
 	with open(file_path, encoding="utf8") as f:
 		for line in f:
-			for n in range(1,MAX_GRAM_LENGTH+1):
+			for n in range(2,MAX_GRAM_LENGTH+1):              
 				create_n_grams(n, line)
+			create_starter_grams(line)
 	#Sort from high to low
 	for grams in all_grams:
 		grams.sort(key=lambda x: x.count, reverse=True)
 	
 	#Write results to file
-	for i in range(1,MAX_GRAM_LENGTH+1):
+	for i in range(0,MAX_GRAM_LENGTH+1):
 		with open('perso_'+str(i)+'grams.txt','w', encoding="utf8") as f:
 			for l in all_grams[i]:
 				f.write(str(l)+'\n')

@@ -8,7 +8,6 @@ namespace AutoCorrector
 {
     class NgramsParser
     {
-        NGram[] ngrams;
-        string 
+
     }
 }
