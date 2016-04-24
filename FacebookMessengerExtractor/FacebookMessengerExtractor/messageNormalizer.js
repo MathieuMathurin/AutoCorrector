@@ -3,7 +3,7 @@
     rl = require('readline'),
     _ = require('lodash');
 
-var ws = fs.createWriteStream('messages/concat3.txt');
+var ws = fs.createWriteStream('messages/concat.txt');
 glob("messages/messages-*.txt", function (err, files) {
     var nbFilesEnded = 0;
     files.forEach(function (file) {
@@ -12,6 +12,7 @@ glob("messages/messages-*.txt", function (err, files) {
         });
         
         lineReader.on('line', function (line) {
+            line = isolateStrings(line);
             if(line != "")
                 ws.write(line + '\n');
         });
@@ -20,9 +21,9 @@ glob("messages/messages-*.txt", function (err, files) {
             ++nbFilesEnded;
             if (nbFilesEnded == files.length) {
                 console.log('All concatenated');
-                //process.exit();               
-                console.log('File closed');
-                printWeirdLine();
+                process.exit();               
+                //console.log('File closed');
+                //printWeirdLine();
             }
         });
     });
