@@ -11,17 +11,6 @@ namespace AutoCorrector
         public int Frequency { get; set; }
         public Dictionary<String, NGram> dictionary { get; set;}
 
-        public NGram()
-        {
-
-        }
-
-        public NGram(string definition)
-        {
-            int splitIndex = definition.LastIndexOf(',');
-            this.Frequency = Int32.Parse(definition.Substring(splitIndex));           
-        }
-
         //public bool Contains(string someText)
         //{
         //    return this.text.Contains(someText);

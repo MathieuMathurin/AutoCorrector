@@ -28,9 +28,10 @@ namespace AutoCorrector
                     var nGram = new Dictionary<string, NGram>();
                     // Read the file load it line by line.
                     System.IO.StreamReader file;
+                    var path = Environment.ExpandEnvironmentVariables(folder + PREFIX + n + POSTFIX);
                     try
                     {
-                        file = new System.IO.StreamReader(folder + PREFIX + n + POSTFIX);
+                        file = new System.IO.StreamReader(path);
                     }
                     catch(FileNotFoundException e)
                     {
@@ -39,28 +40,42 @@ namespace AutoCorrector
                     }                    
                     while ((line = file.ReadLine()) != null)
                     {
-                        var split = line.Split(',');                        
-                        var frequency = split[1];
+                        var index = line.LastIndexOf(',');
+                        var sequence = line.Substring(0, index);                                       
+                        var frequency = line.Substring(index + 1); ;
                         String key;
                         var gram = new NGram();
+
                         if(n > 1)
                         {
-                            var words = split[0].Split(' ');
+                            var words = sequence.Split(' ');
                             var last = words.Last();
-                            key = words.TakeWhile(word => word != last).ToString();
+                            key = "";
+                            for(var i = 0; i < words.Length - 1; ++i)
+                            {
+                                key += words[i];
+                            }
 
                             if (nGram.Keys.Contains(key))
                             {
                                 //ajout dans le subdictionary
+                                gram.Frequency = parseFrequency(frequency);
+                                nGram[key].dictionary.Add(last, gram);
                             }
                             else
                             {
                                 //creation du subdictionary et ajout de l'entree
+                                gram.dictionary = new Dictionary<string, NGram>();
+                                var temp = new NGram();
+                                temp.Frequency = parseFrequency(frequency);
+                                gram.dictionary.Add(last, temp);
+                                nGram.Add(key, gram);
                             }                            
                         }
                         else
                         {
-                            key = split[0];                            
+                            //Pour l'unigram et l'unigram de debut de phrase
+                            key = sequence;
                             gram.Frequency = parseFrequency(frequency);
                             nGram.Add(key, gram);
                         }                                                
