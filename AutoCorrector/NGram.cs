@@ -9,7 +9,7 @@ namespace AutoCorrector
     class NGram
     {       
         public int Frequency { get; set; }
-        public Dictionary<String, NGram> dictionnaire { get; set;}
+        public Dictionary<String, NGram> dictionary { get; set;}
 
         public NGram()
         {
