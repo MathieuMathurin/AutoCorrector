@@ -42,6 +42,8 @@ def create_n_grams(n,line):
 #
 def create_starter_grams(line):
 	words = line.split()
+	if len(words) == 0 :
+		return
 	subs = [words[0]]
 	prev_is_end_of_sentence = False
 	for word in words:
@@ -84,7 +86,7 @@ def create_grams_from_file(file_path):
 	#Read from file then create and count grams
 	with open(file_path, encoding="utf8") as f:
 		for line in f:
-			for n in range(2,MAX_GRAM_LENGTH+1):              
+			for n in range(1,MAX_GRAM_LENGTH+1):              
 				create_n_grams(n, line)
 			create_starter_grams(line)
 	#Sort from high to low
@@ -96,4 +98,5 @@ def create_grams_from_file(file_path):
 		with open('perso_'+str(i)+'grams.txt','w', encoding="utf8") as f:
 			for l in all_grams[i]:
 				f.write(str(l)+'\n')
-		
+
+

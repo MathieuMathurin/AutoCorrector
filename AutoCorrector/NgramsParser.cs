@@ -8,6 +8,6 @@ namespace AutoCorrector
 {
     class NgramsParser
     {
-
+        // todo
     }
 }
