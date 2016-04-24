@@ -210,6 +210,11 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+# User specific text files
+/nGramsFromCorpus/perso_*
+/FacebookMessengerExtractor/FacebookMessengerExtractor/messages
+/FacebookMessengerExtractor/FacebookMessengerExtractor/conversationsIds.txt
 /nGramsFromCorpus/__pycache__/ngrams.cpython-35.pyc
 /nGramsFromCorpus/perso_3grams.txt
 /nGramsFromCorpus/perso_2grams.txt
