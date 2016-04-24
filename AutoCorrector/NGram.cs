@@ -7,24 +7,22 @@ using System.Threading.Tasks;
 namespace AutoCorrector
 {
     class NGram
-    {       
-        public int Frequency { get; set; }
-        public Dictionary<String, NGram> dictionary { get; set;}
+    {
+        int totalSum;
+        public Dictionary<string, Sequence> dictionary { get; set; }
 
-        //public bool Contains(string someText)
-        //{
-        //    return this.text.Contains(someText);
-        //}
+        public NGram()
+        {
+            this.dictionary = new Dictionary<string, Sequence>();
+        }
 
-        //public bool Equals(string other)
-        //{
-        //    return this.text == other;
-        //}
-
-        //public bool Equals(NGram other)
-        //{
-        //    return this.text == other.text;            
-        //}
-
+        public int Sum()
+        {
+            if(totalSum == null)
+            {
+                totalSum = dictionary.Values.Sum(x => x.Sum());
+            }
+            return totalSum;
+        }
     }
 }
