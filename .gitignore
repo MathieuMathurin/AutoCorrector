@@ -210,3 +210,8 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+# User specific text files
+/nGramsFromCorpus/perso_*
+/FacebookMessengerExtractor/FacebookMessengerExtractor/messages
+/FacebookMessengerExtractor/FacebookMessengerExtractor/conversationsIds.txt

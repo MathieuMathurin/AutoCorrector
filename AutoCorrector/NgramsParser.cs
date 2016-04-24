@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace AutoCorrector
 {
-    class TextPredictionAI
+    class NgramsParser
     {
-        //todo
+        NGram[] ngrams;
+        string 
     }
 }
