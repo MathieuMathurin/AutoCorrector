@@ -28,6 +28,10 @@ namespace AutoCorrector
         {
             InitializeComponent();
 
+            var parser = new NgramsParser();
+            parser.Load();
+
+
             //Temporaire
             suggestions1.Add("Allo");
             suggestions1.Add(":)");
