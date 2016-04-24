@@ -9,12 +9,12 @@ namespace AutoCorrector
     class NGram
     {
         string text;
-        int frequency;
+        int Frequency { get; set; }
 
         public NGram(string definition)
         {
             int splitIndex = definition.LastIndexOf(',');
-            this.frequency = Int32.Parse(definition.Substring(splitIndex));
+            this.Frequency = Int32.Parse(definition.Substring(splitIndex));
             this.text = definition.Substring(0, splitIndex);
         }
 
@@ -23,15 +23,11 @@ namespace AutoCorrector
             return this.text.Contains(someText);
         }
 
-        public int GetFrequency()
-        {
-            return this.frequency;
-        }
-
         public bool Equals(string other)
         {
             return this.text == other;
         }
+
         public bool Equals(NGram other)
         {
             return this.text == other.text;
