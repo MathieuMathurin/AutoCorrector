@@ -16,14 +16,14 @@ namespace AutoCorrector
         OrderedDictionary aGram = new OrderedDictionary();
 
 
-        public List<NGram> GetSuggestions(string userInput, NgramsParser knowledge)
+        public OrderedDictionary GetSuggestions(string userInput, NgramsParser knowledge)
         {
             //Ne comporte pas les cas en milieu de mot
             //
             //Normaliser user input
             //S'il y a rien dans userInput, retourner retourner debuts de phrase les plus frequents
 
-            //S'il y a un n mots checher (n+1)grams,(n)grams,(n-1)grams, etc
+            //S'il y a n mots, checher (n+1)grams,(n)grams,(n-1)grams, etc
             //Pour chaque type de (x)grams:
             //  prendre x derniers mots
             //      acceder au NGram
@@ -37,42 +37,55 @@ namespace AutoCorrector
             // Jusqua ce que la clef n'ait qu'un mot:
             //  prob+=frequence du mot / frequence de "la clef"
             //  descend de gram et "pop" le premier mot de la clef
-
-
-            
+            if(userInput == null || userInput.Trim().Length == 0)
+            {
+                return GetFirstWords(knowledge);
+            }
+            string inputText = NormalizeInput(userInput);
             string[] words = userInput.Split(' ');
-            if (words.Length == 0)
-            {
-                return GetFirstWords()
+
+            int nbrWords = words.Length;
+            if (nbrWords >= knowledge.nGramsPerso.Count) {
+                nbrWords = knowledge.nGramsPerso.Count-2;
             }
-            return 
+
+            OrderedDictionary results = new OrderedDictionary();
+            for(int i = nbrWords; i > 0; i--)
+            {
+                string[] wordsSelection = words.Skip(words.Length - i).Take(i).ToArray();
+                string inputTextSelection = string.Join(" ", wordsSelection);
+                if (knowledge.nGramsPerso[i + 1].dictionary.ContainsKey(inputTextSelection))
+                {
+                    int count = 0;
+                    foreach(KeyValuePair<string, Sequence> entry in knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].dictionary)
+                    {
+                        //calcul de probabilit/ de base
+                        results.Add(entry.Key, entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum());
+                        count += 1;
+                        if (count >= 20) break;
+                    }
+                    
+                }
+            }
+
+            return results;
         }
 
-        public List<NGram> GetFirstWords()
+        public OrderedDictionary GetFirstWords(NgramsParser knowledge)
         {
-            return startgrams.Take(20).ToDictionary();
+            //return startgrams.Take(20).ToDictionary();
+            OrderedDictionary results = new OrderedDictionary();
+            int count = 0;
+            foreach(KeyValuePair<string, Sequence> entry in knowledge.nGramsPerso[0].dictionary)
+            {
+                results.Add(entry.Key, entry.Value.Frequency / knowledge.nGramsPerso[0].Sum());
+                count += 1;
+                if (count >= 20) break;
+            }
+            return results;
         }
 
-        public List<NGram> GetGrams(Dictionary<string, NGram> grams, string key)
-        {
-            if (!grams.ContainsKey(key)) return new List<NGram>();
-            OrderedDictionary aGram = grams[key].dictionary;
-            int nbrToGet;
-            if (aGram.Count < 20)
-            {
-                nbrToGet = aGram.Count;
-            }
-            else
-            {
-                nbrToGet = 20;
-            }
-            List<NGram> result = new List<NGram>();
-            for(int i = 0; i<nbrToGet; i++)
-            {
-                aGram[]
-            }
-        }
-
+        /* Unused method at this point. TODO
         private double ComputeProbability(string userInput, string word, NgramsParser knowledge)
         {
             double probability = 1;
@@ -80,6 +93,23 @@ namespace AutoCorrector
 
 
         }
+        */
 
+        private string NormalizeInput(string userInput)
+        {
+            userInput = userInput.Replace(",", " , ");
+            userInput = userInput.Replace("!", " ! ");
+            userInput = userInput.Replace("*", " * ");
+            userInput = userInput.Replace("\"", " \" ");
+            userInput = userInput.Replace("!", " ! ");
+            //Temporary solution
+            //Must deal with with triple dots first
+            //then dots
+            userInput = userInput.Replace(".", " . ");
+            string[] res;
+
+            res = System.Text.RegularExpressions.Regex.Split(userInput, @"\s{2,}");
+            return string.Join(" ", res);
+        }
     }
 }

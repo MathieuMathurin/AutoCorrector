@@ -26,7 +26,7 @@ namespace AutoCorrector
         static List<string> suggestions2 = new List<string>();
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent();            
 
             var parser = new NgramsParser();
             parser.Load();
