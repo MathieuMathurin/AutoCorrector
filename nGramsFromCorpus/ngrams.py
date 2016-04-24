@@ -1,6 +1,6 @@
 # Pour l'instant, lance python dans un terminal.
 # Fait Soit :
-#	"from ngrams.py import *" 
+#	"from ngrams import *" 
 # Si t'as lance python dans le meme repertoire que ce fichier
 # ou 
 # copie colle le fichier dans le terminal
@@ -13,7 +13,7 @@
 
 
 #Choix arbitraire, on peut juste l'augmenter
-MAX_GRAM_LENGTH = 3
+MAX_GRAM_LENGTH = 2
 #Liste de listes vides
 all_grams= [[] for x in range(MAX_GRAM_LENGTH+1)]
 
@@ -59,17 +59,17 @@ class Gram:
 
 def create_grams_from_file(file_path):
 	#Read from file then create and count grams
-	with open(file_path) as f:
+	with open(file_path, encoding="utf8") as f:
 		for line in f:
-			for n in range(1,MAX_GRAM_LENGTH+1):
+			for n in range(2,MAX_GRAM_LENGTH+1):              
 				create_n_grams(n, line)
 	#Sort from high to low
 	for grams in all_grams:
 		grams.sort(key=lambda x: x.count, reverse=True)
 	
 	#Write results to file
-	for i in range(1,MAX_GRAM_LENGTH+1):
-		with open('perso_'+str(i)+'grams.txt','w') as f:
+	for i in range(2,MAX_GRAM_LENGTH+1):
+		with open('perso_'+str(i)+'grams.txt','w', encoding="utf8") as f:
 			for l in all_grams[i]:
 				f.write(str(l)+'\n')
 		
