@@ -76,6 +76,14 @@ namespace AutoCorrector
             return results;
         }
 
+        public string GetStartOfWord(string userInput)
+        {
+            string inputText = NormalizeInput(userInput);
+            string[] seperators = { " " };
+            string[] words = userInput.Split(seperators, StringSplitOptions.RemoveEmptyEntries);
+            return words.Last();
+        }
+
         public OrderedDictionary GetFirstWords(NgramsParser knowledge)
         {
             //return startgrams.Take(20).ToDictionary();

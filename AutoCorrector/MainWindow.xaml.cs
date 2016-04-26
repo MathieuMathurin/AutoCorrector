@@ -27,6 +27,7 @@ namespace AutoCorrector
         NgramsParser parser;
         TextPredictionAI predictionAI;
         List<string> suggestions;
+        List<string> completionSuggestions;
         public MainWindow()
         {
             InitializeComponent();            
@@ -34,28 +35,46 @@ namespace AutoCorrector
             parser = new NgramsParser();
             parser.Load();
             predictionAI = new TextPredictionAI();
-            //suggestions = GetSuggestions();
-
 
             UpdateSuggestions(null, null);
         }
 
-        //static int nbrCalls = 0;
 
         
         private void UpdateSuggestions(object sender, TextChangedEventArgs e)
         {
-            
             //if (sender != null) nbrCalls++;
             //testLabel.Content = "Number of calls to update suggestions done : " + nbrCalls;
             suggestionsPanel.Children.Clear();
-            suggestions = GetSuggestions();
-            foreach (string s in suggestions)
+            if (IsTypingWord())
             {
-                suggestionsPanel.Children.Add(new Label { Content = s });
+                completionSuggestions = new List<string>();
+                string typed = predictionAI.GetStartOfWord(userInput.Text);
+                foreach(string s in suggestions.Where(x => x.StartsWith(typed))){
+                    suggestionsPanel.Children.Add(new Label { Content = s });
+                    completionSuggestions.Add(s);
+                }
+            }
+            else
+            {
+                suggestions = GetSuggestions();
+                foreach (string s in suggestions)
+                {
+                    suggestionsPanel.Children.Add(new Label { Content = s });
+                }
             }
         }
 
+
+        
+        private bool IsTypingWord()
+        {
+            if (userInput.Text == null || userInput.Text.Length == 0) return false;
+            char lastChar= userInput.Text.Last();
+            return Char.IsLetterOrDigit(lastChar);
+        }
+
+        
         private void SuggestionClicked(object sender, MouseButtonEventArgs e)
         {
             Label source = (Label)e.Source;
@@ -67,16 +86,31 @@ namespace AutoCorrector
         {
             if (e.Key == Key.Tab)
             {
-                userInput.Text += " " + suggestions.First() + " ";
+                if(IsTypingWord() == false)
+                {
+                    userInput.Text += " " + suggestions.First() + " ";
+                }
+                else
+                {
+                    string textCopy = userInput.Text;
+                    while (Char.IsLetterOrDigit(textCopy.Last()))
+                    {
+                        textCopy = textCopy.Substring(0, textCopy.Length-1);
+                        if (textCopy.Length == 0) break;
+                    }
+                    userInput.Text = textCopy + completionSuggestions.First() + " ";
+                }
                 UpdateSuggestions(null, null);
                 e.Handled = true;
                 userInput.Select(userInput.Text.Length, 0);
-            }else if (e.Key == Key.Enter)
+            }
+            else if (e.Key == Key.Enter)
             {
                 userInput.Text = "";
-                userInput.Select(userInput.Text.Length, 0);
                 e.Handled = true;
+                userInput.Select(userInput.Text.Length, 0);
             }
+            
         }
 
         private List<string> GetSuggestions()
