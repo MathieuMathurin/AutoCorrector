@@ -8,7 +8,7 @@ namespace AutoCorrector
 {
     class NGram
     {
-        int totalSum;
+        int? totalSum;
         public Dictionary<string, Sequence> dictionary { get; set; }
 
         public NGram()
@@ -22,7 +22,7 @@ namespace AutoCorrector
             {
                 totalSum = dictionary.Values.Sum(x => x.Sum());
             }
-            return totalSum;
+            return (int)totalSum;
         }
     }
 }
