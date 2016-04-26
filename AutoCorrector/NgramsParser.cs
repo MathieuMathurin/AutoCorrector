@@ -83,7 +83,7 @@ namespace AutoCorrector
                         key = "";
                         for (var i = 0; i < words.Length - 1; ++i)
                         {
-                            key = key + " " + words[i];
+                            key = i > 0 ? key + " " + words[i] : words[i];
                         }
 
                         if (nGram.dictionary.Keys.Contains(key))
