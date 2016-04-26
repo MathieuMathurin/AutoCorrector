@@ -9,13 +9,6 @@ namespace AutoCorrector
 {
     class TextPredictionAI
     {
-        //todo
-        Dictionary<string, NGram> startgrams = new Dictionary<string, NGram>();
-        Dictionary<string, NGram> unigrams = new Dictionary<string, NGram>();
-        Dictionary<string, NGram> bigrams = new Dictionary<string, NGram>();
-        OrderedDictionary aGram = new OrderedDictionary();
-
-
         public OrderedDictionary GetSuggestions(string userInput, NgramsParser knowledge)
         {
             //Ne comporte pas les cas en milieu de mot
@@ -37,15 +30,17 @@ namespace AutoCorrector
             // Jusqua ce que la clef n'ait qu'un mot:
             //  prob+=frequence du mot / frequence de "la clef"
             //  descend de gram et "pop" le premier mot de la clef
+
             if(userInput == null || userInput.Trim().Length == 0)
             {
                 return GetFirstWords(knowledge);
             }
             string inputText = NormalizeInput(userInput);
-            string[] words = userInput.Split(' ');
+            string[] seperators = { " " };
+            string[] words = userInput.Split(seperators, StringSplitOptions.RemoveEmptyEntries);
 
             int nbrWords = words.Length;
-            if (nbrWords >= knowledge.nGramsPerso.Count) {
+            if (nbrWords+1 >= knowledge.nGramsPerso.Count) {
                 nbrWords = knowledge.nGramsPerso.Count-2;
             }
 
@@ -53,14 +48,24 @@ namespace AutoCorrector
             for(int i = nbrWords; i > 0; i--)
             {
                 string[] wordsSelection = words.Skip(words.Length - i).Take(i).ToArray();
-                string inputTextSelection = string.Join(" ", wordsSelection);
+                string inputTextSelection = string.Join(" ", wordsSelection).Trim();
+                //temporary, les clefs des dict ont des espaces
+                inputTextSelection = " " + inputTextSelection;
                 if (knowledge.nGramsPerso[i + 1].dictionary.ContainsKey(inputTextSelection))
                 {
                     int count = 0;
                     foreach(KeyValuePair<string, Sequence> entry in knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].dictionary)
                     {
                         //calcul de probabilit/ de base
-                        results.Add(entry.Key, entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum());
+                        //Temporaire, deals with clef deja entree
+                        try
+                        {
+                            results.Add(entry.Key, (double)(entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum()));
+                        }
+                        catch
+                        {
+                            results[entry.Key] = (double)results[entry.Key] +(double)(entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum());
+                        }
                         count += 1;
                         if (count >= 20) break;
                     }
@@ -78,7 +83,10 @@ namespace AutoCorrector
             int count = 0;
             foreach(KeyValuePair<string, Sequence> entry in knowledge.nGramsPerso[0].dictionary)
             {
-                results.Add(entry.Key, entry.Value.Frequency / knowledge.nGramsPerso[0].Sum());
+                int sum = knowledge.nGramsPerso[0].Sum();
+                int freq = entry.Value.Frequency;
+                double value = (double)freq / sum;
+                results.Add(entry.Key, value);
                 count += 1;
                 if (count >= 20) break;
             }
@@ -109,7 +117,7 @@ namespace AutoCorrector
             string[] res;
 
             res = System.Text.RegularExpressions.Regex.Split(userInput, @"\s{2,}");
-            return string.Join(" ", res);
+            return string.Join(" ", res).Trim();
         }
     }
 }

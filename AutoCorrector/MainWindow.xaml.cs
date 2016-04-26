@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,52 +24,30 @@ namespace AutoCorrector
     /// </summary>
     public partial class MainWindow : Window
     {
-        static List<string> suggestions1 = new List<string>();
-        static List<string> suggestions2 = new List<string>();
+        NgramsParser parser;
+        TextPredictionAI predictionAI;
+        List<string> suggestions;
         public MainWindow()
         {
             InitializeComponent();            
 
-            var parser = new NgramsParser();
+            parser = new NgramsParser();
             parser.Load();
-
-
-            //Temporaire
-            suggestions1.Add("Allo");
-            suggestions1.Add(":)");
-            suggestions1.Add("Hey");
-            suggestions1.Add("ca");
-            suggestions1.Add("Jmen");
-            suggestions1.Add("Penses");
-            suggestions1.Add("ahah");
-            suggestions1.Add("Mon");
-            suggestions1.Add("Ma");
-            suggestions1.Add("Veux");
-            suggestions1.Add("XD");
-
-
-
-            suggestions2.Add("va");
-            suggestions2.Add("?");
-            suggestions2.Add(":O");
-            suggestions2.Add("viens");
-            suggestions2.Add("tu");
-            suggestions2.Add("je");
-            suggestions2.Add("ahah");
-            suggestions2.Add(":p");
-
+            predictionAI = new TextPredictionAI();
+            //suggestions = GetSuggestions();
 
 
             UpdateSuggestions(null, null);
         }
 
-        static int nbrCalls = 0;
-        static List<string> suggestions = suggestions1;
+        //static int nbrCalls = 0;
 
+        
         private void UpdateSuggestions(object sender, TextChangedEventArgs e)
         {
-            if(sender != null) nbrCalls++;
-            testLabel.Content = "Number of calls to update suggestions done : " + nbrCalls;
+            
+            //if (sender != null) nbrCalls++;
+            //testLabel.Content = "Number of calls to update suggestions done : " + nbrCalls;
             suggestionsPanel.Children.Clear();
             suggestions = GetSuggestions();
             foreach (string s in suggestions)
@@ -98,14 +78,17 @@ namespace AutoCorrector
                 e.Handled = true;
             }
         }
-        //Temporaire, sortir cette methode pour la mettre dans une classe AI.
+
         private List<string> GetSuggestions()
         {
-            if (nbrCalls % 2 == 0)
+            List<string> results = new List<string>();
+            OrderedDictionary pairs = predictionAI.GetSuggestions(userInput.Text, this.parser);
+            foreach(DictionaryEntry entry in pairs)
             {
-                return suggestions1;
+                results.Add(entry.Key.ToString());
             }
-            return suggestions2;
+            return results;
+
         }
 
     
