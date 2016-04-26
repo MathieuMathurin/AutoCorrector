@@ -9,8 +9,8 @@ namespace AutoCorrector
 {       
     class NgramsParser
     {        
-        List<NGram> nGramsPerso;
-        List<NGram> nGramsPublic;
+        public List<NGram> nGramsPerso;
+        public List<NGram> nGramsPublic;
         
         public void Load()
         {

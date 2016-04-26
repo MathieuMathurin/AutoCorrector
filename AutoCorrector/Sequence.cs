@@ -16,11 +16,12 @@ namespace AutoCorrector
 
         public int Sum()
         {
+            if (dictionary == null) return Frequency+1;
             if (subSum == null)
             {
                 subSum = dictionary.Values.Sum(x => x.Frequency);
             }
-            return subSum;
+            return (int)subSum;
         }
     }
 }
