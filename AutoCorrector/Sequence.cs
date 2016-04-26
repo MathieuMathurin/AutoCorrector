@@ -17,6 +17,7 @@ namespace AutoCorrector
 
         public int Sum()
         {
+            //temporary
             if (dictionary == null) return Frequency+1;
             if (subSum == null)
             {

@@ -50,7 +50,7 @@ namespace AutoCorrector
                 string[] wordsSelection = words.Skip(words.Length - i).Take(i).ToArray();
                 string inputTextSelection = string.Join(" ", wordsSelection).Trim();
                 //temporary, les clefs des dict ont des espaces
-                inputTextSelection = " " + inputTextSelection;
+                inputTextSelection = inputTextSelection;
                 if (knowledge.nGramsPerso[i + 1].dictionary.ContainsKey(inputTextSelection))
                 {
                     int count = 0;
@@ -58,11 +58,11 @@ namespace AutoCorrector
                     {
                         //calcul de probabilit/ de base
                         //Temporaire, deals with clef deja entree
-                        try
+                        if( results.Contains(entry.Key) == false)
                         {
                             results.Add(entry.Key, (double)(entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum()));
                         }
-                        catch
+                        else
                         {
                             results[entry.Key] = (double)results[entry.Key] +(double)(entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum());
                         }
