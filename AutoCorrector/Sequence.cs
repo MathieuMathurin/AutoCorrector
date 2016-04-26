@@ -12,7 +12,8 @@ namespace AutoCorrector
         public int Frequency { get; set; }
         private int subSum;
         public int maxFrequency { get; set; }
-        public Dictionary<String, Sequence> dictionary { get; set;}
+        public Dictionary<string, Sequence> dictionary { get; set;}
+        public List<KeyValuePair<string, Sequence>> orderedSequence { get; set; }
 
         public int Sum()
         {
@@ -22,6 +23,21 @@ namespace AutoCorrector
                 subSum = dictionary.Values.Sum(x => x.Frequency);
             }
             return (int)subSum;
+        }
+
+        public void Sort()
+        {
+            if(dictionary != null)
+            {
+                if (orderedSequence == null)
+                {
+                    orderedSequence = dictionary.Select(kvp => kvp).OrderByDescending(kvp => kvp.Value.Frequency).ToList();
+                }
+                else
+                {
+                    orderedSequence = orderedSequence.OrderByDescending(kvp => kvp.Value.Frequency).ToList();
+                }
+            }            
         }
     }
 }

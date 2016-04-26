@@ -124,6 +124,9 @@ namespace AutoCorrector
                 }
                 file.Close();
                 n += 1;
+                nGram.Sort();
+                nGram.Sum();
+
                 if (isPerso)
                 {
                     this.nGramsPerso.Add(nGram);

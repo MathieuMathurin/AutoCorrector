@@ -10,6 +10,7 @@ namespace AutoCorrector
     {
         int? totalSum;
         public Dictionary<string, Sequence> dictionary { get; set; }
+        public List<KeyValuePair<string, Sequence>> orderedSequence { get; set; }
 
         public NGram()
         {
@@ -23,6 +24,18 @@ namespace AutoCorrector
                 totalSum = dictionary.Values.Sum(x => x.Sum());
             }
             return (int)totalSum;
+        }
+
+        public void Sort()
+        {
+            if(orderedSequence == null)
+            {
+                orderedSequence = dictionary.Select(kvp => kvp).OrderByDescending(kvp => kvp.Value.Frequency).ToList();
+            }
+            else
+            {
+                orderedSequence = orderedSequence.OrderByDescending(kvp => kvp.Value.Frequency).ToList();
+            }
         }
     }
 }
