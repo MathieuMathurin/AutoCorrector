@@ -68,7 +68,7 @@ namespace AutoCorrector
                         //    /results[entry.Key] = (double)results[entry.Key] +(double)(entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum());
                         //}
                         count += 1;
-                        if (count >= 20) break;
+                        if (count >= 100) break;
                     }
                     
                 }

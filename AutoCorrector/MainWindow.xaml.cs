@@ -63,7 +63,7 @@ namespace AutoCorrector
                 {
                     suggestionsPanel.Children.Add(new Label { Content = s });
                     count += 1;
-                    if (count > 20) break;
+                    if (count >= 20) break;
                 }
             }
         }
@@ -91,17 +91,25 @@ namespace AutoCorrector
             {
                 if(IsTypingWord() == false)
                 {
-                    userInput.Text += " " + suggestions.First() + " ";
+                    if(suggestions.Count > 0)
+                    {
+                        userInput.Text += " " + suggestions.First() + " ";
+                    }
+                    
                 }
                 else
                 {
                     string textCopy = userInput.Text;
-                    while (Char.IsLetterOrDigit(textCopy.Last()))
+                    while (Char.IsLetterOrDigit(textCopy.Last()) || textCopy.Last() == '\'')
                     {
                         textCopy = textCopy.Substring(0, textCopy.Length-1);
                         if (textCopy.Length == 0) break;
                     }
-                    userInput.Text = textCopy + completionSuggestions.First() + " ";
+                    if(completionSuggestions.Count > 0)
+                    {
+                        userInput.Text = textCopy + completionSuggestions.First() + " ";
+                    }
+                    
                 }
                 UpdateSuggestions(null, null);
                 e.Handled = true;
