@@ -58,9 +58,12 @@ namespace AutoCorrector
             else
             {
                 suggestions = GetSuggestions();
+                int count = 0;
                 foreach (string s in suggestions)
                 {
                     suggestionsPanel.Children.Add(new Label { Content = s });
+                    count += 1;
+                    if (count > 20) break;
                 }
             }
         }

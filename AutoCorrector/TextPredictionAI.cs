@@ -97,7 +97,7 @@ namespace AutoCorrector
                 double value = (double)freq / sum;
                 results.Add(entry.Key, value);
                 count += 1;
-                if (count >= 20) break;
+                if (count >= 100) break;
             }
             return results;
         }
