@@ -11,27 +11,9 @@ namespace AutoCorrector
     {
         public OrderedDictionary GetSuggestions(string userInput, NgramsParser knowledge)
         {
-            //Ne comporte pas les cas en milieu de mot
-            //
-            //Normaliser user input
-            //S'il y a rien dans userInput, retourner retourner debuts de phrase les plus frequents
 
-            //S'il y a n mots, checher (n+1)grams,(n)grams,(n-1)grams, etc
-            //Pour chaque type de (x)grams:
-            //  prendre x derniers mots
-            //      acceder au NGram
-            //      prendre ses 20 plus frequents
-            //          (peut etre que la probabilite devrait etre ajustee en fonction de taille du gram/ nombre de mots dans le userinput)
-            //      pour chaque plus frequent, calculer probabilite et retourner une liste de mot manquant et sa probabilite
-            //
-
-            //calcul de probabilite
-            // prob=0
-            // Jusqua ce que la clef n'ait qu'un mot:
-            //  prob+=frequence du mot / frequence de "la clef"
-            //  descend de gram et "pop" le premier mot de la clef
-
-            if(userInput == null || userInput.Trim().Length == 0)
+            if(userInput == null || userInput.Trim().Length == 0 ||
+                IsNewSentence(userInput))
             {
                 return GetFirstWords(knowledge);
             }
@@ -62,11 +44,6 @@ namespace AutoCorrector
                         {
                             results.Add(entry.Key, ComputeProbability(inputTextSelection,entry.Key, knowledge.nGramsPerso,i));
                         }
-                        //else
-                        //{
-                        //    //when ComputeProbability is done, this will be useless
-                        //    /results[entry.Key] = (double)results[entry.Key] +(double)(entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum());
-                        //}
                         count += 1;
                         if (count >= 100) break;
                     }
@@ -124,6 +101,12 @@ namespace AutoCorrector
 
         }
         
+        private bool IsNewSentence(string input)
+        {
+            if (input == null) return false;
+            string text = input.Trim();
+            return text.Length == 0 || text.Last() == '.' || text.Last() == '!' || text.Last() == '?';
+        }
 
         private string NormalizeInput(string userInput)
         {
