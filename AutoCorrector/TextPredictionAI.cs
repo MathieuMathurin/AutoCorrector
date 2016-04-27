@@ -9,7 +9,15 @@ namespace AutoCorrector
 {
     class TextPredictionAI
     {
-        public OrderedDictionary GetSuggestions(string userInput, NgramsParser knowledge)
+        NgramsParser knowledge;
+        OrderedDictionary results;
+
+        public TextPredictionAI(NgramsParser parser)
+        {
+            this.knowledge = parser;
+        }
+
+        public OrderedDictionary GetSuggestions(string userInput)
         {
             //Ne comporte pas les cas en milieu de mot
             //
@@ -38,29 +46,35 @@ namespace AutoCorrector
             string inputText = NormalizeInput(userInput);
             string[] seperators = { " " };
             string[] words = userInput.Split(seperators, StringSplitOptions.RemoveEmptyEntries);
+           
+            results = new OrderedDictionary();
 
+            AddSuggestionsPerso(words);
+
+            return results;
+        }
+
+        private void AddSuggestionsPerso(string[] words)
+        {
             int nbrWords = words.Length;
-            if (nbrWords+1 >= knowledge.nGramsPerso.Count) {
-                nbrWords = knowledge.nGramsPerso.Count-2;
+            if (nbrWords + 1 >= knowledge.nGramsPerso.Count)
+            {
+                nbrWords = knowledge.nGramsPerso.Count - 2;
             }
-
-            OrderedDictionary results = new OrderedDictionary();
-            for(int i = nbrWords; i > 0; i--)
+            for (int i = nbrWords; i > 0; i--)
             {
                 string[] wordsSelection = words.Skip(words.Length - i).Take(i).ToArray();
                 string inputTextSelection = string.Join(" ", wordsSelection).Trim();
-                //temporary, les clefs des dict ont des espaces
-                inputTextSelection = inputTextSelection;
                 if (knowledge.nGramsPerso[i + 1].dictionary.ContainsKey(inputTextSelection))
                 {
                     int count = 0;
-                    foreach(KeyValuePair<string, Sequence> entry in knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].dictionary)
+                    foreach (KeyValuePair<string, Sequence> entry in knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].dictionary)
                     {
                         //Should first take the most frequent x keys
                         //calcul de probabilit/ de base
-                        if( results.Contains(entry.Key) == false)
+                        if (results.Contains(entry.Key) == false)
                         {
-                            results.Add(entry.Key, ComputeProbability(inputTextSelection,entry.Key, knowledge.nGramsPerso,i));
+                            results.Add(entry.Key, ComputeProbability(inputTextSelection, entry.Key, knowledge.nGramsPerso, i));
                         }
                         //else
                         //{
@@ -70,11 +84,43 @@ namespace AutoCorrector
                         count += 1;
                         if (count >= 100) break;
                     }
-                    
                 }
             }
+        }
 
-            return results;
+        private void AddSuggestionsPublic(string[] words)
+        {
+            //Work in progress
+            int nbrWords = words.Length;
+            if (nbrWords + 1 >= knowledge.nGramsPublic.Count)
+            {
+                nbrWords = knowledge.nGramsPerso.Count - 2;
+            }
+            for (int i = nbrWords; i > 0; i--)
+            {
+                string[] wordsSelection = words.Skip(words.Length - i).Take(i).ToArray();
+                string inputTextSelection = string.Join(" ", wordsSelection).Trim();
+                if (knowledge.nGramsPerso[i + 1].dictionary.ContainsKey(inputTextSelection))
+                {
+                    int count = 0;
+                    foreach (KeyValuePair<string, Sequence> entry in knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].dictionary)
+                    {
+                        //Should first take the most frequent x keys
+                        //calcul de probabilit/ de base
+                        if (results.Contains(entry.Key) == false)
+                        {
+                            results.Add(entry.Key, ComputeProbability(inputTextSelection, entry.Key, knowledge.nGramsPerso, i));
+                        }
+                        //else
+                        //{
+                        //    //when ComputeProbability is done, this will be useless
+                        //    /results[entry.Key] = (double)results[entry.Key] +(double)(entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum());
+                        //}
+                        count += 1;
+                        if (count >= 100) break;
+                    }
+                }
+            }
         }
 
         public string GetStartOfWord(string userInput)
