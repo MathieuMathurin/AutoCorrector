@@ -33,6 +33,11 @@ namespace AutoCorrector
 
             AddSuggestionsPerso(words);
 
+            if(results.Count < 20)
+            {
+                AddSuggestionsPublic(words);
+            }
+
             return results;
         }
 
@@ -66,35 +71,33 @@ namespace AutoCorrector
         }
 
         private void AddSuggestionsPublic(string[] words)
-        {
-            //Work in progress
+        {            
             int nbrWords = words.Length;
             if (nbrWords + 1 >= knowledge.nGramsPublic.Count)
             {
-                nbrWords = knowledge.nGramsPerso.Count - 2;
+                nbrWords = knowledge.nGramsPublic.Count - 2;
             }
             for (int i = nbrWords; i > 0; i--)
             {
                 string[] wordsSelection = words.Skip(words.Length - i).Take(i).ToArray();
                 string inputTextSelection = string.Join(" ", wordsSelection).Trim();
-                if (knowledge.nGramsPerso[i + 1].dictionary.ContainsKey(inputTextSelection))
-                {
-                    int count = 0;
-                    foreach (KeyValuePair<string, Sequence> entry in knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].dictionary)
+                if (knowledge.nGramsPublic[i].dictionary.ContainsKey(inputTextSelection))
+                {                    
+                    foreach (KeyValuePair<string, Sequence> entry in knowledge.nGramsPublic[i].dictionary[inputTextSelection].dictionary)
                     {
                         //Should first take the most frequent x keys
                         //calcul de probabilit/ de base
                         if (results.Contains(entry.Key) == false)
                         {
-                            results.Add(entry.Key, ComputeProbability(inputTextSelection, entry.Key, knowledge.nGramsPerso, i));
+                            //i - 1 car on a pas de nGram de debut de phrase
+                            results.Add(entry.Key, ComputeProbability(inputTextSelection, entry.Key, knowledge.nGramsPublic, i - 1));
                         }
                         //else
                         //{
                         //    //when ComputeProbability is done, this will be useless
                         //    /results[entry.Key] = (double)results[entry.Key] +(double)(entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum());
-                        //}
-                        count += 1;
-                        if (count >= 100) break;
+                        //}                        
+                        if (results.Count >= 20) break;
                     }
                 }
             }
