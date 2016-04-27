@@ -27,7 +27,7 @@ namespace AutoCorrector
             }
             string inputText = NormalizeInput(userInput);
             string[] seperators = { " " };
-            string[] words = userInput.Split(seperators, StringSplitOptions.RemoveEmptyEntries);
+            string[] words = inputText.Split(seperators, StringSplitOptions.RemoveEmptyEntries);
            
             results = new OrderedDictionary();
 
@@ -53,10 +53,10 @@ namespace AutoCorrector
 
         private void AddSuggestionsPerso(string[] words)
         {
-            int nbrWords = words.Length;
-            if (nbrWords + 1 >= knowledge.nGramsPerso.Count)
+            int nbrWords = words.Length; //5
+            if (nbrWords + 1 >= knowledge.nGramsPerso.Count)//6 >= 6
             {
-                nbrWords = knowledge.nGramsPerso.Count - 2;
+                nbrWords = knowledge.nGramsPerso.Count - 2; // = 4, permettra de regarder dans nGramsPerso[4+1]
             }
             //Cherche dans tous les nGrams sauf unigram et unigram de debut de phrase
             AddSuggestionsFromNGrams(nbrWords, words, knowledge.nGramsPerso);
@@ -118,7 +118,7 @@ namespace AutoCorrector
         {
             string inputText = NormalizeInput(userInput);
             string[] seperators = { " " };
-            string[] words = userInput.Split(seperators, StringSplitOptions.RemoveEmptyEntries);
+            string[] words = inputText.Split(seperators, StringSplitOptions.RemoveEmptyEntries);
             return words.Last();
         }
 
@@ -134,7 +134,7 @@ namespace AutoCorrector
                 int sum = knowledge.nGramsPerso[0].Sum();
                 int freq = entry.Value.Frequency;
                 double value = (double)freq / sum;
-                results.Add(entry.Key, value);
+                results.Add(FirstLetterUppercase(entry.Key), value);
                 count += 1;
                 if (count >= 100) break;
             }
@@ -143,10 +143,20 @@ namespace AutoCorrector
             return results;
         }
 
-        
+        //Recoit "unmot" retourne "Unmot"
+        private string FirstLetterUppercase(string word)
+        {
+            return char.ToUpper(word[0]) + word.Substring(1);
+        }
+
+
         private double ComputeProbability(string inputText, string word, List<NGram> nGrams, int inputLength)
         {
             //Juste reverifier ici si tout est ok
+            if (String.IsNullOrEmpty(inputText))
+            {
+                return (double) (nGrams[0].dictionary[word].Frequency / nGrams[0].Sum());
+            }
             double probability = nGrams[inputLength].dictionary[inputText].dictionary[word].Frequency / nGrams[inputLength].dictionary[inputText].Sum();
             string[] userWords = inputText.Split(' ');
             double discount = 0.9;
@@ -169,7 +179,7 @@ namespace AutoCorrector
         {
             if (input == null) return false;
             string text = input.Trim();
-            return text.Length == 0 || text.Last() == '.' || text.Last() == '!' || text.Last() == '?';
+            return text.Length == 0 || text.Last() == '.' || text.Last() == '!' || text.Last() == '?' || input.Contains(" ")==false;
         }
 
         private string NormalizeInput(string userInput)
@@ -186,7 +196,7 @@ namespace AutoCorrector
             string[] res;
 
             res = System.Text.RegularExpressions.Regex.Split(userInput, @"\s{2,}");
-            return string.Join(" ", res).Trim();
+            return string.Join(" ", res).Trim().ToLower();
         }
     }
 }

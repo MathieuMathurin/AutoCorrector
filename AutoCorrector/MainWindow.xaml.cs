@@ -50,7 +50,7 @@ namespace AutoCorrector
             {
                 completionSuggestions = new List<string>();
                 string typed = predictionAI.GetStartOfWord(userInput.Text);
-                foreach(string s in suggestions.Where(x => x.StartsWith(typed))){
+                foreach(string s in suggestions.Where(x => x.ToLower().StartsWith(typed))){
                     suggestionsPanel.Children.Add(new Label { Content = s });
                     completionSuggestions.Add(s);
                 }
