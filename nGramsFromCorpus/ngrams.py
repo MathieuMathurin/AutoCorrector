@@ -85,10 +85,17 @@ class Gram:
 def create_grams_from_file(file_path):
 	#Read from file then create and count grams
 	with open(file_path, encoding="utf8") as f:
-		for line in f:
-			for n in range(1,MAX_GRAM_LENGTH+1):              
-				create_n_grams(n, line)
-			create_starter_grams(line)
+		lines =1
+		try:
+			for line in f:
+				for n in range(1,MAX_GRAM_LENGTH+1):              
+					create_n_grams(n, line)
+				create_starter_grams(line)
+				lines+=1
+		except UnicodeDecodeError:
+			pass
+			#print ("At line " + str(lines) + " in text")
+			#raise
 	#Sort from high to low
 	for grams in all_grams:
 		grams.sort(key=lambda x: x.count, reverse=True)
