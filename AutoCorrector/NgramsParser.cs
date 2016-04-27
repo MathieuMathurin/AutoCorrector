@@ -90,7 +90,7 @@ namespace AutoCorrector
                         {
                             //ajout dans le subdictionary
                             sequence.Frequency = parseFrequency(frequency);
-                            if (!nGram.dictionary.Keys.Contains(last))
+                            if (!nGram.dictionary[key].dictionary.Keys.Contains(last))
                             {
                                 nGram.dictionary[key].dictionary.Add(last, sequence);
                             }                            
