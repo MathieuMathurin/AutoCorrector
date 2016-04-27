@@ -56,16 +56,17 @@ namespace AutoCorrector
                     int count = 0;
                     foreach(KeyValuePair<string, Sequence> entry in knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].dictionary)
                     {
+                        //Should first take the most frequent x keys
                         //calcul de probabilit/ de base
-                        //Temporaire, deals with clef deja entree
                         if( results.Contains(entry.Key) == false)
                         {
-                            results.Add(entry.Key, (double)(entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum()));
+                            results.Add(entry.Key, ComputeProbability(inputTextSelection,entry.Key, knowledge.nGramsPerso,i));
                         }
-                        else
-                        {
-                            results[entry.Key] = (double)results[entry.Key] +(double)(entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum());
-                        }
+                        //else
+                        //{
+                        //    //when ComputeProbability is done, this will be useless
+                        //    /results[entry.Key] = (double)results[entry.Key] +(double)(entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum());
+                        //}
                         count += 1;
                         if (count >= 20) break;
                     }
@@ -101,15 +102,28 @@ namespace AutoCorrector
             return results;
         }
 
-        /* Unused method at this point. TODO
-        private double ComputeProbability(string userInput, string word, NgramsParser knowledge)
+        
+        private double ComputeProbability(string inputText, string word, List<NGram> nGrams, int inputLength)
         {
-            double probability = 1;
-            string[] userWords = userInput.Split(' ');
 
+            double probability = nGrams[inputLength + 1].dictionary[inputText].dictionary[word].Frequency / nGrams[inputLength + 1].dictionary[inputText].Sum();
+            string[] userWords = inputText.Split(' ');
+            double discount = 0.9;
+            for(int i = inputLength-1; i >= 0; i--)
+            {
+                string[] wordsSelection = userWords.Skip(userWords.Length - i).Take(i).ToArray();
+                string key = string.Join(" ", wordsSelection).Trim();
+                if (nGrams[i+1].dictionary.ContainsKey(key) && nGrams[i+1].dictionary[key].dictionary.ContainsKey(word))
+                {
+                    probability += (nGrams[i + 1].dictionary[key].dictionary[word].Frequency / nGrams[i + 1].dictionary[key].Sum()) * discount;
+                }
+                
+                discount *= discount;
+            }
+            return probability;
 
         }
-        */
+        
 
         private string NormalizeInput(string userInput)
         {

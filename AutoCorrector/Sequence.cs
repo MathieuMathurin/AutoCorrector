@@ -10,7 +10,7 @@ namespace AutoCorrector
     class Sequence
     {       
         public int Frequency { get; set; }
-        private int subSum;
+        private int? subSum;
         public int maxFrequency { get; set; }
         public Dictionary<string, Sequence> dictionary { get; set;}
         public List<KeyValuePair<string, Sequence>> orderedSequence { get; set; }

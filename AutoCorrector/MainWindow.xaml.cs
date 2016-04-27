@@ -71,7 +71,7 @@ namespace AutoCorrector
         {
             if (userInput.Text == null || userInput.Text.Length == 0) return false;
             char lastChar= userInput.Text.Last();
-            return Char.IsLetterOrDigit(lastChar);
+            return Char.IsLetterOrDigit(lastChar) || lastChar == '\'' || lastChar == '-' || lastChar == '_';
         }
 
         
