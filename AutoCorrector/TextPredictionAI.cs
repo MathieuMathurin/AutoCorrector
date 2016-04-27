@@ -71,7 +71,7 @@ namespace AutoCorrector
         }
 
         private void AddSuggestionsPublic(string[] words)
-        {            
+        {
             int nbrWords = words.Length;
             if (nbrWords + 1 >= knowledge.nGramsPublic.Count)
             {
@@ -82,7 +82,7 @@ namespace AutoCorrector
                 string[] wordsSelection = words.Skip(words.Length - i).Take(i).ToArray();
                 string inputTextSelection = string.Join(" ", wordsSelection).Trim();
                 if (knowledge.nGramsPublic[i].dictionary.ContainsKey(inputTextSelection))
-                {                    
+                {
                     foreach (KeyValuePair<string, Sequence> entry in knowledge.nGramsPublic[i].dictionary[inputTextSelection].dictionary)
                     {
                         //Should first take the most frequent x keys
@@ -111,19 +111,23 @@ namespace AutoCorrector
             return words.Last();
         }
 
+        //Returns a list of frequent words that start sentences
         public OrderedDictionary GetFirstWords(NgramsParser knowledge)
         {
-            //return startgrams.Take(20).ToDictionary();
             OrderedDictionary results = new OrderedDictionary();
             int count = 0;
             foreach(KeyValuePair<string, Sequence> entry in knowledge.nGramsPerso[0].dictionary)
             {
+                if(entry.Key.StartsWith("!") == false && entry.Key.StartsWith("?") == false && entry.Key.StartsWith(".") == false)
+                {
                 int sum = knowledge.nGramsPerso[0].Sum();
                 int freq = entry.Value.Frequency;
                 double value = (double)freq / sum;
                 results.Add(entry.Key, value);
                 count += 1;
                 if (count >= 100) break;
+            }
+                
             }
             return results;
         }
