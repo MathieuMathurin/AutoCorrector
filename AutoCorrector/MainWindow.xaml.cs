@@ -34,7 +34,7 @@ namespace AutoCorrector
 
             parser = new NgramsParser();
             parser.Load();
-            predictionAI = new TextPredictionAI();
+            predictionAI = new TextPredictionAI(parser);
 
             UpdateSuggestions(null, null);
         }
@@ -127,7 +127,7 @@ namespace AutoCorrector
         private List<string> GetSuggestions()
         {
             List<string> results = new List<string>();
-            OrderedDictionary pairs = predictionAI.GetSuggestions(userInput.Text, this.parser);
+            OrderedDictionary pairs = predictionAI.GetSuggestions(userInput.Text);
             foreach(DictionaryEntry entry in pairs)
             {
                 results.Add(entry.Key.ToString());
