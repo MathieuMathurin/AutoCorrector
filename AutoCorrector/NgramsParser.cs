@@ -11,6 +11,7 @@ namespace AutoCorrector
     {        
         public List<NGram> nGramsPerso;
         public List<NGram> nGramsPublic;
+        public NGram nGramDebutPhrase;
         
         public void Load()
         {
@@ -40,6 +41,7 @@ namespace AutoCorrector
                 if (args != null && args.Length > 1 && args[1] != null)
                 {
                     folder = args[1];
+                    //cherche des fichiers contenant un nombre >= 0
                     n = 0;
                 }
             }
@@ -48,6 +50,7 @@ namespace AutoCorrector
                 if (args != null && args.Length > 2 && args[2] != null)
                 {
                     folder = args[2];
+                    //cherche des fichiers contenant un nombre >= 1
                     n = 1;
                 }
             }                       
@@ -123,18 +126,27 @@ namespace AutoCorrector
                     }
                 }
                 file.Close();
-                n += 1;
+                                
                 nGram.Sort();
                 nGram.Sum();
 
-                if (isPerso)
+                if(n == 0)
                 {
-                    this.nGramsPerso.Add(nGram);
+                    this.nGramDebutPhrase = nGram;
                 }
                 else
                 {
-                    this.nGramsPublic.Add(nGram);
-                }
+                    if (isPerso)
+                    {
+                        this.nGramsPerso.Add(nGram);
+                    }
+                    else
+                    {
+                        this.nGramsPublic.Add(nGram);
+                    }
+                }                
+
+                n += 1;
             }
         }
 

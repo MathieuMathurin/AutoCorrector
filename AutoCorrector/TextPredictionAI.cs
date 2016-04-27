@@ -31,12 +31,22 @@ namespace AutoCorrector
            
             results = new OrderedDictionary();
 
+            //L'ordre des appels, fait l'ordre de recherche de suggestions
+
+            //A voir comment on defini quand on a une fin de ligne dans un message
+            //AddSuggestionsFromUniGram(knowledge.nGramDebutPhrase);
+
             AddSuggestionsPerso(words);
 
             if(results.Count < 20)
             {
                 AddSuggestionsPublic(words);
             }
+
+            AddSuggestionsFromUniGram(knowledge.nGramsPerso[0]);
+
+            //Cas ultime TODO: Definir quand on l'appel
+            //AddSuggestionsFromUniGram(knowledge.nGramsPublic[0]);
 
             return results;
         }
@@ -48,26 +58,8 @@ namespace AutoCorrector
             {
                 nbrWords = knowledge.nGramsPerso.Count - 2;
             }
-            for (int i = nbrWords; i > 0; i--)
-            {
-                string[] wordsSelection = words.Skip(words.Length - i).Take(i).ToArray();
-                string inputTextSelection = string.Join(" ", wordsSelection).Trim();
-                if (knowledge.nGramsPerso[i + 1].dictionary.ContainsKey(inputTextSelection))
-                {
-                    int count = 0;
-                    foreach (KeyValuePair<string, Sequence> entry in knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].dictionary)
-                    {
-                        //Should first take the most frequent x keys
-                        //calcul de probabilit/ de base
-                        if (results.Contains(entry.Key) == false)
-                        {
-                            results.Add(entry.Key, ComputeProbability(inputTextSelection, entry.Key, knowledge.nGramsPerso, i));
-                        }
-                        count += 1;
-                        if (count >= 100) break;
-                    }
-                }
-            }
+            //Cherche dans tous les nGrams sauf unigram et unigram de debut de phrase
+            AddSuggestionsFromNGrams(nbrWords, words, knowledge.nGramsPerso);
         }
 
         private void AddSuggestionsPublic(string[] words)
@@ -77,29 +69,48 @@ namespace AutoCorrector
             {
                 nbrWords = knowledge.nGramsPublic.Count - 2;
             }
+            //Cherche dans tous les nGrams sauf unigram
+            AddSuggestionsFromNGrams(nbrWords, words, knowledge.nGramsPublic);
+        }
+
+        //cherche dans les nGram > 1Gram
+        private void AddSuggestionsFromNGrams(int nbrWords, string[] words, List<NGram> nGrams)
+        {
             for (int i = nbrWords; i > 0; i--)
             {
                 string[] wordsSelection = words.Skip(words.Length - i).Take(i).ToArray();
                 string inputTextSelection = string.Join(" ", wordsSelection).Trim();
-                if (knowledge.nGramsPublic[i].dictionary.ContainsKey(inputTextSelection))
+                if (nGrams[i].dictionary.ContainsKey(inputTextSelection))
                 {
-                    foreach (KeyValuePair<string, Sequence> entry in knowledge.nGramsPublic[i].dictionary[inputTextSelection].dictionary)
+                    int count = 0;
+                    foreach (KeyValuePair<string, Sequence> entry in nGrams[i].dictionary[inputTextSelection].dictionary)
                     {
                         //Should first take the most frequent x keys
                         //calcul de probabilit/ de base
                         if (results.Contains(entry.Key) == false)
                         {
-                            //i - 1 car on a pas de nGram de debut de phrase
-                            results.Add(entry.Key, ComputeProbability(inputTextSelection, entry.Key, knowledge.nGramsPublic, i - 1));
+                            results.Add(entry.Key, ComputeProbability(inputTextSelection, entry.Key, nGrams, i));
                         }
-                        //else
-                        //{
-                        //    //when ComputeProbability is done, this will be useless
-                        //    /results[entry.Key] = (double)results[entry.Key] +(double)(entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum());
-                        //}                        
-                        if (results.Count >= 20) break;
+                        count += 1;
+                        if (count >= 100) break;
                     }
                 }
+            }
+        }
+
+        private void AddSuggestionsFromUniGram(NGram nGram)
+        {
+            int count = 0;
+            foreach(KeyValuePair<string, Sequence> entry in nGram.dictionary)
+            {
+                //Should first take the most frequent x keys
+                //calcul de probabilit/ de base
+                if (results.Contains(entry.Key) == false)
+                {
+                    results.Add(entry.Key, entry.Value.Frequency / nGram.Sum());
+                }
+                count += 1;
+                if (count >= 100) break;
             }
         }
 
@@ -116,7 +127,7 @@ namespace AutoCorrector
         {
             OrderedDictionary results = new OrderedDictionary();
             int count = 0;
-            foreach(KeyValuePair<string, Sequence> entry in knowledge.nGramsPerso[0].dictionary)
+            foreach(KeyValuePair<string, Sequence> entry in knowledge.nGramDebutPhrase.dictionary)
             {
                 if(entry.Key.StartsWith("!") == false && entry.Key.StartsWith("?") == false && entry.Key.StartsWith(".") == false)
                 {
@@ -135,8 +146,8 @@ namespace AutoCorrector
         
         private double ComputeProbability(string inputText, string word, List<NGram> nGrams, int inputLength)
         {
-
-            double probability = nGrams[inputLength + 1].dictionary[inputText].dictionary[word].Frequency / nGrams[inputLength + 1].dictionary[inputText].Sum();
+            //Juste reverifier ici si tout est ok
+            double probability = nGrams[inputLength].dictionary[inputText].dictionary[word].Frequency / nGrams[inputLength].dictionary[inputText].Sum();
             string[] userWords = inputText.Split(' ');
             double discount = 0.9;
             for(int i = inputLength-1; i >= 0; i--)
