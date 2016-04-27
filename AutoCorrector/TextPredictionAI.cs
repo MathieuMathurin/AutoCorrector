@@ -88,11 +88,7 @@ namespace AutoCorrector
                         {
                             results.Add(entry.Key, ComputeProbability(inputTextSelection, entry.Key, knowledge.nGramsPerso, i));
                         }
-                        //else
-                        //{
-                        //    //when ComputeProbability is done, this will be useless
-                        //    /results[entry.Key] = (double)results[entry.Key] +(double)(entry.Value.Frequency / knowledge.nGramsPerso[i + 1].dictionary[inputTextSelection].Sum());
-                        //}
+
                         count += 1;
                         if (count >= 100) break;
                     }
@@ -108,19 +104,23 @@ namespace AutoCorrector
             return words.Last();
         }
 
+        //Returns a list of frequent words that start sentences
         public OrderedDictionary GetFirstWords(NgramsParser knowledge)
         {
-            //return startgrams.Take(20).ToDictionary();
             OrderedDictionary results = new OrderedDictionary();
             int count = 0;
             foreach(KeyValuePair<string, Sequence> entry in knowledge.nGramsPerso[0].dictionary)
             {
-                int sum = knowledge.nGramsPerso[0].Sum();
-                int freq = entry.Value.Frequency;
-                double value = (double)freq / sum;
-                results.Add(entry.Key, value);
-                count += 1;
-                if (count >= 100) break;
+                if(entry.Key.StartsWith("!") == false && entry.Key.StartsWith("?") == false && entry.Key.StartsWith(".") == false)
+                {
+                    int sum = knowledge.nGramsPerso[0].Sum();
+                    int freq = entry.Value.Frequency;
+                    double value = (double)freq / sum;
+                    results.Add(entry.Key, value);
+                    count += 1;
+                    if (count >= 100) break;
+                }
+                
             }
             return results;
         }
