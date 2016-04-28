@@ -37,5 +37,14 @@ namespace AutoCorrector
                 orderedSequence = orderedSequence.OrderByDescending(kvp => kvp.Value.Frequency).ToList();
             }
         }
+
+        public void Sort(bool newWord)
+        {
+            if (newWord)
+            {
+                orderedSequence = null;
+            }
+            Sort();
+        }
     }
 }

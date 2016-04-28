@@ -38,6 +38,7 @@ namespace AutoCorrector
                             Sequence newSequence = new Sequence();
                             newSequence.Frequency = 5;
                             gramCollection.dictionary[key].dictionary.Add(word, newSequence);
+                            gramCollection.dictionary[key].dictionary[word].Sort(true);
                         }
                     }else
                     {
@@ -48,6 +49,7 @@ namespace AutoCorrector
                         newKey.dictionary = new Dictionary<string, Sequence>();
                         newKey.dictionary.Add(word,newSequence);
                         gramCollection.dictionary.Add(key, newKey);
+                        gramCollection.Sort(true);
                     }
                 } //Unigrams
                 else
@@ -56,12 +58,14 @@ namespace AutoCorrector
                     if (gramCollection.dictionary.ContainsKey(key))
                     {
                         gramCollection.dictionary[key].Frequency += 3;
+                        gramCollection.Sort();
                     }
                     else
                     {
                         Sequence newSequence = new Sequence();
                         newSequence.Frequency = 5;
                         gramCollection.dictionary.Add(key,newSequence);
+                        gramCollection.Sort(true);
                     }
                 }
 
@@ -92,12 +96,14 @@ namespace AutoCorrector
             if(starterGrams.dictionary.ContainsKey(word))
             {
                 starterGrams.dictionary[word].Frequency += 3;
+                starterGrams.Sort(false);
             }
             else
             {
                 Sequence newKey = new Sequence();
                 newKey.Frequency = 5;
                 starterGrams.dictionary.Add(word, newKey);
+                starterGrams.Sort(true);
             }
         }
 
