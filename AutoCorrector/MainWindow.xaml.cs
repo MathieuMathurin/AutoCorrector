@@ -209,6 +209,7 @@ namespace AutoCorrector
                 //Changer public pour perso quadn ravoir perso
                 learner.GramsFromMessage(i + 1, message, parser.nGramsPerso[i]);
             }
+            learner.StarterGramsFromMessage(message, parser.nGramDebutPhrase);
             
         }
 

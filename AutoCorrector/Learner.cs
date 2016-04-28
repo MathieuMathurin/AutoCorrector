@@ -9,6 +9,7 @@ namespace AutoCorrector
 {
     class Learner
     {
+        string[] endOfSentences = { "!", "?", ".", "..." };
         //string end
         public void GramsFromMessage(int gramsize, string message, NGram gramCollection)
         {
@@ -66,6 +67,43 @@ namespace AutoCorrector
 
             }
 
+        }
+
+        public void StarterGramsFromMessage(string message, NGram starterGrams)
+        {
+            message = NormalizeInput(message);
+            string[] seperators = { " " };
+            string[] words = message.Split(seperators, StringSplitOptions.RemoveEmptyEntries);
+            bool prevWordIsEndOfSentence = false;
+
+            if (words.Length == 0 || words == null) return;
+
+            for(int i = 0; i< words.Length; i++)
+            {
+                if (i == 0) AddStarterGram(words[i], starterGrams);
+                if (IsEndOfSentence(words[i])) prevWordIsEndOfSentence = true;
+                else if (prevWordIsEndOfSentence) AddStarterGram(words[i], starterGrams);
+            }
+
+        }
+
+        private void AddStarterGram(string word, NGram starterGrams)
+        {
+            if(starterGrams.dictionary.ContainsKey(word))
+            {
+                starterGrams.dictionary[word].Frequency += 3;
+            }
+            else
+            {
+                Sequence newKey = new Sequence();
+                newKey.Frequency = 5;
+                starterGrams.dictionary.Add(word, newKey);
+            }
+        }
+
+        private bool IsEndOfSentence(string word)
+        {
+            return endOfSentences.Contains(word);
         }
 
         private string NormalizeInput(string userInput)
