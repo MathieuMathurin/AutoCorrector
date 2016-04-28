@@ -82,7 +82,8 @@ namespace AutoCorrector
         {
             Label source = (Label)e.Source;
             userInput.Text += " " + source.Content.ToString() + " ";
-            userInput.Select(userInput.Text.Length, 0); ;
+            userInput.Focus();
+            userInput.CaretIndex=userInput.Text.Length;
         }
 
         private void UserInputKeyDown(object sender, KeyEventArgs e)
