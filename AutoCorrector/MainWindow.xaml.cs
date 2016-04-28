@@ -53,7 +53,7 @@ namespace AutoCorrector
             {
                 completionSuggestions = new List<string>();
                 string typed = predictionAI.GetStartOfWord(userInput.Text);
-                var filteredSuggestions = suggestions.Where(x => x.StartsWith(typed)).ToList();
+                var filteredSuggestions = suggestions.Where(x => x.ToLower().StartsWith(typed)).ToList();
                 if (filteredSuggestions.Count == 0)
                 {                    
                     filteredSuggestions = wordAlternatives(typed);                    
@@ -85,6 +85,7 @@ namespace AutoCorrector
         private List<string> wordAlternatives(string input)
         {                        
             var alternatives = new List<string>();
+            var simpleAlternatives = new List<string>();
             
             //Return unfiltered suggestions if only one char
             if(input.Length == 1)
@@ -96,7 +97,7 @@ namespace AutoCorrector
             for(var i = 0; i < input.Length; ++i)
             {
                 //ajout des suggestions ayant le char au meme index que le input
-                alternatives = suggestions.FindAll(sugg => i < sugg.Length && sugg[i] == input[i] && !alternatives.Contains(sugg)).Concat(alternatives).ToList();
+                simpleAlternatives = suggestions.FindAll(sugg => i < sugg.Length && sugg[i] == input[i] && !alternatives.Contains(sugg)).Concat(simpleAlternatives).ToList();
 
                 for (var j = i + 1; j < input.Length; ++j)
                 {
@@ -104,6 +105,33 @@ namespace AutoCorrector
                 }
             }
 
+            //Ces suggestions sont trop generals et donc pas tres pertinentes. A ajouter lorsqu'aucun autre cas dispo.
+            if(alternatives.Count == 0)
+            {
+                alternatives = alternatives.Concat(simpleAlternatives).ToList();
+            }
+
+            //Garde les suggestions selon le nombre de lettres en communs
+            var intersections = alternatives
+            .Select(sugg => 
+                new{
+                    word = sugg,
+                    count = sugg.ToArray()
+                            .Intersect(input.ToArray())
+                            .ToList()
+                            .Count
+                }
+            )
+            .ToList()
+            .OrderByDescending(sugg => sugg.count)
+            .Select(sugg => sugg.word)
+            .ToList();
+            
+            if(intersections.Count != 0)
+            {
+                alternatives = intersections;
+            }
+             
             return alternatives;                        
         }
         
@@ -153,8 +181,7 @@ namespace AutoCorrector
                     
                 }
                 else
-                {
-                    
+                {                    
                     if(completionSuggestions.Count > 0)
                     {
                         string remainingText = DeleteStartedWord();
@@ -188,16 +215,24 @@ namespace AutoCorrector
         private List<string> GetSuggestions()
         {
             List<string> results = new List<string>();
-            OrderedDictionary pairs = predictionAI.GetSuggestions(userInput.Text);
-            foreach(DictionaryEntry entry in pairs)
+            var sequences = new List<KeyValuePair<string, double>>();
+            var pairs = predictionAI.GetSuggestions(userInput.Text);
+            foreach(KeyValuePair<string, double> entry in pairs)
             {
-                results.Add(entry.Key.ToString());
+                sequences.Add(entry);
             }
+            results = sequences.OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToList();
             return results;
 
         }
 
     
+    }
+
+    class Intersection
+    {
+        public string word { get; set; }
+        public int count { get; set; }
     }
 
     

@@ -11,14 +11,14 @@ namespace AutoCorrector
     class TextPredictionAI
     {
         NgramsParser knowledge;
-        OrderedDictionary results;
+        Dictionary<string, double> results;
 
         public TextPredictionAI(NgramsParser parser)
         {
             this.knowledge = parser;
         }
 
-        public OrderedDictionary GetSuggestions(string userInput)
+        public Dictionary<string, double> GetSuggestions(string userInput)
         {
 
             if(userInput == null || userInput.Trim().Length == 0 ||
@@ -30,7 +30,7 @@ namespace AutoCorrector
             string[] seperators = { " " };
             string[] words = inputText.Split(seperators, StringSplitOptions.RemoveEmptyEntries);
            
-            results = new OrderedDictionary();
+            results = new Dictionary<string, double>();
 
             //L'ordre des appels, fait l'ordre de recherche de suggestions
 
@@ -89,7 +89,7 @@ namespace AutoCorrector
                     {
                         //Should first take the most frequent x keys
                         //calcul de probabilit/ de base
-                        if (results.Contains(entry.Key) == false)
+                        if (results.Keys.Contains(entry.Key) == false)
                         {
                             results.Add(entry.Key, ComputeProbability(inputTextSelection, entry.Key, nGrams, i));
                         }
@@ -108,7 +108,7 @@ namespace AutoCorrector
             {
                 //Should first take the most frequent x keys
                 //calcul de probabilit/ de base
-                if (results.Contains(entry.Key) == false)
+                if (results.Keys.Contains(entry.Key) == false)
                 {
                     results.Add(entry.Key, entry.Value.Frequency / nGram.Sum());
                 }
@@ -126,9 +126,9 @@ namespace AutoCorrector
         }
 
         //Returns a list of frequent words that start sentences
-        public OrderedDictionary GetFirstWords(NgramsParser knowledge)
+        public Dictionary<string, double> GetFirstWords(NgramsParser knowledge)
         {
-            OrderedDictionary results = new OrderedDictionary();
+            var results = new Dictionary<string, double>();
             int count = 0;
             foreach(KeyValuePair<string, Sequence> entry in knowledge.nGramDebutPhrase.orderedSequence)
             {
