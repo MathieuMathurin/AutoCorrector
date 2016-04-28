@@ -83,6 +83,7 @@ namespace AutoCorrector
         private List<string> wordAlternatives(string input)
         {                        
             var alternatives = new List<string>();
+            var simpleAlternatives = new List<string>();
             
             //Return unfiltered suggestions if only one char
             if(input.Length == 1)
@@ -94,12 +95,18 @@ namespace AutoCorrector
             for(var i = 0; i < input.Length; ++i)
             {
                 //ajout des suggestions ayant le char au meme index que le input
-                alternatives = suggestions.FindAll(sugg => i < sugg.Length && sugg[i] == input[i] && !alternatives.Contains(sugg)).Concat(alternatives).ToList();
+                simpleAlternatives = suggestions.FindAll(sugg => i < sugg.Length && sugg[i] == input[i] && !alternatives.Contains(sugg)).Concat(simpleAlternatives).ToList();
 
                 for (var j = i + 1; j < input.Length; ++j)
                 {
                     alternatives = suggestions.FindAll(sugg => i < sugg.Length && j < sugg.Length && sugg[i] == input[i] && sugg[j] == input[j] && !alternatives.Contains(sugg)).Concat(alternatives).ToList();
                 }
+            }
+
+            //Ces suggestions sont trop generals et donc pas tres pertinentes. A ajouter lorsqu'aucun autre cas dispo.
+            if(alternatives.Count == 0)
+            {
+                alternatives = alternatives.Concat(simpleAlternatives).ToList();
             }
 
             return alternatives;                        
