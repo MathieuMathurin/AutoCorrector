@@ -27,7 +27,8 @@ namespace AutoCorrector
         NgramsParser parser;
         TextPredictionAI predictionAI;
         List<string> suggestions;
-        List<string> completionSuggestions;
+        List<string> completionSuggestions;        
+
         public MainWindow()
         {
             InitializeComponent();            
@@ -50,7 +51,14 @@ namespace AutoCorrector
             {
                 completionSuggestions = new List<string>();
                 string typed = predictionAI.GetStartOfWord(userInput.Text);
-                foreach(string s in suggestions.Where(x => x.StartsWith(typed))){
+                var filteredSuggestions = suggestions.Where(x => x.StartsWith(typed)).ToList();
+                if (filteredSuggestions.Count == 0)
+                {                    
+                    filteredSuggestions = wordAlternatives(typed);                    
+                }
+
+                foreach (string s in filteredSuggestions)
+                {
                     suggestionsPanel.Children.Add(new Label { Content = s });
                     completionSuggestions.Add(s);
                 }
@@ -68,7 +76,30 @@ namespace AutoCorrector
             }
         }
 
+        private List<string> wordAlternatives(string input)
+        {                        
+            var alternatives = new List<string>();
+            
+            //Return unfiltered suggestions if only one char
+            if(input.Length == 1)
+            {
+                return suggestions;
+            }
 
+            //Analyse input chars to find a matching
+            for(var i = 0; i < input.Length; ++i)
+            {
+                //ajout des suggestions ayant le char au meme index que le input
+                alternatives = suggestions.FindAll(sugg => i < sugg.Length && sugg[i] == input[i] && !alternatives.Contains(sugg)).Concat(alternatives).ToList();
+
+                for (var j = i + 1; j < input.Length; ++j)
+                {
+                    alternatives = suggestions.FindAll(sugg => i < sugg.Length && j < sugg.Length && sugg[i] == input[i] && sugg[j] == input[j] && !alternatives.Contains(sugg)).Concat(alternatives).ToList();
+                }
+            }
+
+            return alternatives;                        
+        }
         
         private bool IsTypingWord()
         {
@@ -89,7 +120,7 @@ namespace AutoCorrector
         {
             if (e.Key == Key.Tab)
             {
-                if(IsTypingWord() == false)
+                if(!IsTypingWord())
                 {
                     if(suggestions.Count > 0)
                     {
@@ -102,14 +133,13 @@ namespace AutoCorrector
                     string textCopy = userInput.Text;
                     while (Char.IsLetterOrDigit(textCopy.Last()) || textCopy.Last() == '\'')
                     {
-                        textCopy = textCopy.Substring(0, textCopy.Length-1);
+                        textCopy = textCopy.Substring(0, textCopy.Length - 1);
                         if (textCopy.Length == 0) break;
                     }
-                    if(completionSuggestions.Count > 0)
+                    if (completionSuggestions.Count > 0)
                     {
                         userInput.Text = textCopy + completionSuggestions.First() + " ";
                     }
-                    
                 }
                 UpdateSuggestions(null, null);
                 e.Handled = true;
