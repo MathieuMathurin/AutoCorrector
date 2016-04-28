@@ -109,6 +109,27 @@ namespace AutoCorrector
                 alternatives = alternatives.Concat(simpleAlternatives).ToList();
             }
 
+            //Garde les suggestions selon le nombre de lettres en communs
+            var intersections = alternatives
+            .Select(sugg => 
+                new{
+                    word = sugg,
+                    count = sugg.ToArray()
+                            .Intersect(input.ToArray())
+                            .ToList()
+                            .Count
+                }
+            )
+            .ToList()
+            .OrderByDescending(sugg => sugg.count)
+            .Select(sugg => sugg.word)
+            .ToList();
+            
+            if(intersections.Count != 0)
+            {
+                alternatives = intersections;
+            }
+             
             return alternatives;                        
         }
         
@@ -193,6 +214,12 @@ namespace AutoCorrector
         }
 
     
+    }
+
+    class Intersection
+    {
+        public string word { get; set; }
+        public int count { get; set; }
     }
 
     
