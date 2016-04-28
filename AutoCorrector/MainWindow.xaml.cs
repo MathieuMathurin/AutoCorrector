@@ -65,7 +65,7 @@ namespace AutoCorrector
                 if(completionSuggestions.Count <= 2)
                 {
                     //Faudrait get de nouveaux mots
-            }
+                }
             }
             else
             {
