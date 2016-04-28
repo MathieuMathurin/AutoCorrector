@@ -54,6 +54,10 @@ namespace AutoCorrector
                     suggestionsPanel.Children.Add(new Label { Content = s });
                     completionSuggestions.Add(s);
                 }
+                if(completionSuggestions.Count <= 2)
+                {
+                    //Faudrait get de nouveaux mots
+                }
             }
             else
             {
@@ -81,9 +85,26 @@ namespace AutoCorrector
         private void SuggestionClicked(object sender, MouseButtonEventArgs e)
         {
             Label source = (Label)e.Source;
-            userInput.Text += " " + source.Content.ToString() + " ";
+            string newText = userInput.Text + " ";
+            if (IsTypingWord())
+            {
+                newText = DeleteStartedWord();
+            }
+            
+            userInput.Text = newText + source.Content.ToString() + " ";
             userInput.Focus();
             userInput.CaretIndex=userInput.Text.Length;
+        }
+
+        private string DeleteStartedWord()
+        {
+            string textCopy = userInput.Text;
+            while (Char.IsLetterOrDigit(textCopy.Last()) || textCopy.Last() == '\'')
+            {
+                textCopy = textCopy.Substring(0, textCopy.Length - 1);
+                if (textCopy.Length == 0) break;
+            }
+            return textCopy;
         }
 
         private void UserInputKeyDown(object sender, KeyEventArgs e)
@@ -100,15 +121,11 @@ namespace AutoCorrector
                 }
                 else
                 {
-                    string textCopy = userInput.Text;
-                    while (Char.IsLetterOrDigit(textCopy.Last()) || textCopy.Last() == '\'')
-                    {
-                        textCopy = textCopy.Substring(0, textCopy.Length-1);
-                        if (textCopy.Length == 0) break;
-                    }
+                    
                     if(completionSuggestions.Count > 0)
                     {
-                        userInput.Text = textCopy + completionSuggestions.First() + " ";
+                        string remainingText = DeleteStartedWord();
+                        userInput.Text = remainingText + completionSuggestions.First() + " ";
                     }
                     
                 }
