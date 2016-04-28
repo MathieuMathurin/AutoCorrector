@@ -27,7 +27,7 @@ namespace AutoCorrector
         NgramsParser parser;
         TextPredictionAI predictionAI;
         List<string> suggestions;
-        List<string> completionSuggestions;
+        List<string> completionSuggestions;        
 
         public MainWindow()
         {
@@ -51,7 +51,7 @@ namespace AutoCorrector
             {
                 completionSuggestions = new List<string>();
                 string typed = predictionAI.GetStartOfWord(userInput.Text);
-                var filteredSuggestions = suggestions.Where(x => x.StartsWith(typed)).ToList();
+                var filteredSuggestions = suggestions.Where(x => x.ToLower().StartsWith(typed)).ToList();
                 if (filteredSuggestions.Count == 0)
                 {                    
                     filteredSuggestions = wordAlternatives(typed);                    
@@ -151,8 +151,7 @@ namespace AutoCorrector
                     
                 }
                 else
-                {
-                    
+                {                    
                     if(completionSuggestions.Count > 0)
                     {
                         string remainingText = DeleteStartedWord();
@@ -175,11 +174,13 @@ namespace AutoCorrector
         private List<string> GetSuggestions()
         {
             List<string> results = new List<string>();
-            OrderedDictionary pairs = predictionAI.GetSuggestions(userInput.Text);
-            foreach(DictionaryEntry entry in pairs)
+            var sequences = new List<KeyValuePair<string, double>>();
+            var pairs = predictionAI.GetSuggestions(userInput.Text);
+            foreach(KeyValuePair<string, double> entry in pairs)
             {
-                results.Add(entry.Key.ToString());
+                sequences.Add(entry);
             }
+            results = sequences.OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToList();
             return results;
 
         }
