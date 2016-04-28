@@ -14,6 +14,7 @@ namespace AutoCorrector
         public int maxFrequency { get; set; }
         public Dictionary<string, Sequence> dictionary { get; set;}
         public List<KeyValuePair<string, Sequence>> orderedSequence { get; set; }
+        bool isSorted = false;
 
         public int Sum()
         {
@@ -28,7 +29,7 @@ namespace AutoCorrector
 
         public void Sort()
         {
-            if(dictionary != null)
+            if(dictionary != null && isSorted == false)
             {
                 if (orderedSequence == null)
                 {
@@ -38,7 +39,18 @@ namespace AutoCorrector
                 {
                     orderedSequence = orderedSequence.OrderByDescending(kvp => kvp.Value.Frequency).ToList();
                 }
+                isSorted = true;
             }            
+        }
+
+        public void Sort(bool newKey)
+        {
+            isSorted = false;
+            if (newKey)
+            {
+                orderedSequence = null;
+            }
+            Sort();
         }
     }
 }
