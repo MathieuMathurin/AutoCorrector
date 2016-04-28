@@ -28,6 +28,7 @@ namespace AutoCorrector
         TextPredictionAI predictionAI;
         List<string> suggestions;
         List<string> completionSuggestions;
+        Learner learner;
 
         public MainWindow()
         {
@@ -36,6 +37,7 @@ namespace AutoCorrector
             parser = new NgramsParser();
             parser.Load();
             predictionAI = new TextPredictionAI(parser);
+            learner = new Learner();
 
             UpdateSuggestions(null, null);
         }
@@ -165,9 +167,20 @@ namespace AutoCorrector
             }
             else if (e.Key == Key.Enter)
             {
+                TreatMessage(userInput.Text);
                 userInput.Text = "";
                 e.Handled = true;
                 userInput.Select(userInput.Text.Length, 0);
+            }
+            
+        }
+
+        private void TreatMessage(string message)
+        {
+            for(int i = 0; i < parser.nGramsPerso.Count; i++)
+            {
+                //Changer public pour perso quadn ravoir perso
+                learner.GramsFromMessage(i + 1, message, parser.nGramsPerso[i]);
             }
             
         }

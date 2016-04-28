@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AutoCorrector
@@ -194,8 +195,18 @@ namespace AutoCorrector
             //Temporary solution
             //Must deal with with triple dots first
             //then dots
-            userInput = userInput.Replace(".", " . ");
+            //Deal with multiple dots
+            //string pattern = ".+";
+            //string replacement = " ... ";
+            //Regex rgx = new Regex(pattern);
+            //userInput = rgx.Replace(userInput, replacement);
+
+            //string singleDotPattern = "(?<=[^\\.])\\.{1}(?!\\.)";
+            //string singleDotReplacement = " . ";
+            //rgx = new Regex(singleDotPattern);
+            //userInput = rgx.Replace(userInput, singleDotReplacement);
             string[] res;
+
 
             res = System.Text.RegularExpressions.Regex.Split(userInput, @"\s{2,}");
             return string.Join(" ", res).Trim().ToLower();
