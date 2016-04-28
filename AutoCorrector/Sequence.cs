@@ -42,5 +42,15 @@ namespace AutoCorrector
                 isSorted = true;
             }            
         }
+
+        public void Sort(bool newKey)
+        {
+            isSorted = false;
+            if (newKey)
+            {
+                orderedSequence = null;
+            }
+            Sort();
+        }
     }
 }
