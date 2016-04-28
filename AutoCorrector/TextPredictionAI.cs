@@ -83,7 +83,8 @@ namespace AutoCorrector
                 if (nGrams[i].dictionary.ContainsKey(inputTextSelection))
                 {
                     int count = 0;
-                    foreach (KeyValuePair<string, Sequence> entry in nGrams[i].dictionary[inputTextSelection].dictionary)
+                    nGrams[i].dictionary[inputTextSelection].Sort();
+                    foreach (KeyValuePair<string, Sequence> entry in nGrams[i].dictionary[inputTextSelection].orderedSequence)
                     {
                         //Should first take the most frequent x keys
                         //calcul de probabilit/ de base
@@ -101,7 +102,8 @@ namespace AutoCorrector
         private void AddSuggestionsFromUniGram(NGram nGram)
         {
             int count = 0;
-            foreach(KeyValuePair<string, Sequence> entry in nGram.dictionary)
+            nGram.Sort();
+            foreach(KeyValuePair<string, Sequence> entry in nGram.orderedSequence)
             {
                 //Should first take the most frequent x keys
                 //calcul de probabilit/ de base
@@ -127,7 +129,7 @@ namespace AutoCorrector
         {
             OrderedDictionary results = new OrderedDictionary();
             int count = 0;
-            foreach(KeyValuePair<string, Sequence> entry in knowledge.nGramDebutPhrase.dictionary)
+            foreach(KeyValuePair<string, Sequence> entry in knowledge.nGramDebutPhrase.orderedSequence)
             {
                 if(entry.Key.StartsWith("!") == false && entry.Key.StartsWith("?") == false && entry.Key.StartsWith(".") == false)
                 {
