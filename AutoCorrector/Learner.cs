@@ -30,13 +30,15 @@ namespace AutoCorrector
                     {
                         if (gramCollection.dictionary[key].dictionary.ContainsKey(word))
                         {
-                            gramCollection.dictionary[key].dictionary[word].Frequency += 3;
+                            int ponderation = (int) ((gramCollection.dictionary[key].Sum() / gramCollection.dictionary[key].dictionary.Count) * 0.2);
+                            if (ponderation < 1) ponderation = 1;
+                            gramCollection.dictionary[key].dictionary[word].Frequency += ponderation;
                             gramCollection.dictionary[key].dictionary[word].Sort(false);
                         }
                         else
                         {
                             Sequence newSequence = new Sequence();
-                            newSequence.Frequency = 5;
+                            newSequence.Frequency = (int)((gramCollection.dictionary[key].Sum() / gramCollection.dictionary[key].dictionary.Count) * 1.5); 
                             gramCollection.dictionary[key].dictionary.Add(word, newSequence);
                             gramCollection.dictionary[key].dictionary[word].Sort(true);
                         }
@@ -57,13 +59,17 @@ namespace AutoCorrector
                     key = words[i];
                     if (gramCollection.dictionary.ContainsKey(key))
                     {
-                        gramCollection.dictionary[key].Frequency += 3;
+                        int ponderation = (int)((gramCollection.Sum() / gramCollection.dictionary.Count) * 0.2);
+                        if (ponderation < 1) ponderation = 1;
+                        gramCollection.dictionary[key].Frequency += ponderation;
                         gramCollection.Sort();
                     }
                     else
                     {
+                        int ponderation = (int)((gramCollection.Sum() / gramCollection.dictionary.Count) * 1.5);
+                        if (ponderation < 1) ponderation = 1;
                         Sequence newSequence = new Sequence();
-                        newSequence.Frequency = 5;
+                        newSequence.Frequency = ponderation;
                         gramCollection.dictionary.Add(key,newSequence);
                         gramCollection.Sort(true);
                     }
@@ -95,13 +101,17 @@ namespace AutoCorrector
         {
             if(starterGrams.dictionary.ContainsKey(word))
             {
-                starterGrams.dictionary[word].Frequency += 3;
+                int ponderation = (int)((starterGrams.Sum() / starterGrams.dictionary.Count) * 0.2);
+                if (ponderation < 1) ponderation = 1;
+                starterGrams.dictionary[word].Frequency += ponderation;
                 starterGrams.Sort(false);
             }
             else
             {
+                int ponderation = (int)((starterGrams.Sum() / starterGrams.dictionary.Count) * 1.5);
+                if (ponderation < 1) ponderation = 1;
                 Sequence newKey = new Sequence();
-                newKey.Frequency = 5;
+                newKey.Frequency = ponderation;
                 starterGrams.dictionary.Add(word, newKey);
                 starterGrams.Sort(true);
             }
